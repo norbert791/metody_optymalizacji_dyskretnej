@@ -1,16 +1,16 @@
 module MyGraphPrimitives
 
-  export DirectedGraph, SimpleGraph, getVertices, getNeighbours, addVertice!, Graph
+  export DirectedGraph, SimpleGraph, getVertices, getNeighbours, addEdge!, Graph
 
-  abstract type Graph{T} end
+  abstract type Graph end
 
   import LinearAlgebra
 
   function getVertices(graph::Graph)::UnitRange{T} end
   function getNeighbours(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned end
-  function addVertice!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end
+  function addEdge!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end
 
-  mutable struct DirectedGraph{T <: Unsigned}
+  mutable struct DirectedGraph{T <: Unsigned} <: Graph
     vertices::UnitRange{T}
     edges::Matrix{T}
     function DirectedGraph{T}(numOfVertices::T)::DirectedGraph where T <: Unsigned
@@ -36,7 +36,7 @@ module MyGraphPrimitives
     return result
   end #function
 
-  function addVertice!(graph::DirectedGraph{T}, edge::Tuple{T, T})::DirectedGraph{T} where T <: Unsigned
+  function addEdge!(graph::DirectedGraph{T}, edge::Tuple{T, T})::DirectedGraph{T} where T <: Unsigned
     @boundscheck(
       if !(edge[1] in graph.vertices && edge[2] in graph.vertices)
         throw(BoundsError("Edge connects nonexistent vertices"))
@@ -86,7 +86,7 @@ module MyGraphPrimitives
     return arr
   end #function
 
-  mutable struct SimpleGraph{T <: Unsigned}
+  mutable struct SimpleGraph{T <: Unsigned} <: Graph
     vertices::UnitRange{T}
     edges::SimmetricSparseArray{T, T}
     function SimpleGraph(numOfVertices::T)::SimpleGraph{T} where T <: Unsigned
@@ -108,7 +108,7 @@ module MyGraphPrimitives
     return result
   end #function
 
-  function addVertice!(graph::SimpleGraph, edge::Tuple{Unsigned, Unsigned})::SimpleGraph
+  function addEdge!(graph::SimpleGraph, edge::Tuple{T, T})::SimpleGraph where T <: Unsigned
     @boundscheck(
       if !(edge[1] in graph.vertices && edge[2] in graph.vertices)
         throw(BoundsError("Edge does not connet this graph's vertices"))

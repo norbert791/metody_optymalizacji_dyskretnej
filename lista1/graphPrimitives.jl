@@ -1,6 +1,7 @@
 module MyGraphPrimitives
 
-export DirectedGraph, SimpleGraph, SparseDirectedGraph, SparseSimpleGraph, getVertices, getNeighbours, addEdge!, Graph
+export DirectedGraph, SimpleGraph, SparseDirectedGraph, SparseSimpleGraph, getVertices,
+       getNeighbours, addEdge!, Graph, loadGraph
 
 abstract type Graph end
 
@@ -114,7 +115,7 @@ function addEdge!(graph::SimpleGraph, edge::Tuple{T, T})::SimpleGraph where T <:
       throw(BoundsError("Edge does not connet this graph's vertices"))
     end #if
   )
-  set!(graph.edges, edge[1], edge[2], get(graph.edges, edge[1], edge[2]) + 1)
+  set!(graph.edges, edge[1], edge[2], get(graph.edges, edge[1], edge[2]) + T(1))
   
   return graph
 end #function
@@ -179,6 +180,38 @@ function addEdge!(graph::SparseSimpleGraph{T}, edge::Tuple{T, T})::SparseSimpleG
   end #if
 
   return graph
+end #function
+
+function loadGraph(fileName::String, sparse::Bool)
+  open(fileName) do file
+    graphType = readline(file)
+    graphType = uppercase(graphType)[1]
+    numOfVertices = parse(UInt64, readline(file))
+    #numOfEdges
+    _ = parse(UInt32, readline(file))
+    result = Nothing
+    if sparse
+      if graphType == 'D'
+        result = SparseDirectedGraph{UInt32}(UInt32(numOfVertices))
+      else
+        result = SparseSimpleGraph{UInt32}(UInt32(numOfVertices))
+      end #if
+    else
+      if graphType == 'D'
+        result = DirectedGraph{UInt32}(UInt32(numOfVertices))
+      else
+        result = SimpleGraph{UInt32}(UInt32(numOfVertices))
+      end #if
+    end #if
+
+    for line in eachline(file)
+      t = split(line)
+      x, y = parse(UInt32, t[1]), parse(UInt32, t[2])
+      MyGraphPrimitives.addEdge!(result, (x, y))
+    end #for
+
+    return result
+  end #open ... do
 end #function
 
 end #module

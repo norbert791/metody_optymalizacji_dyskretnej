@@ -62,4 +62,65 @@ using .MyGraphAlgorithms
     @test dfsOrder(temp, Unsigned(1)) == [1, 10, 4, 3, 5, 8, 2]
     @test dfsTree(temp, Unsigned(1)) == (1, [(4, [(10, [(3, [])])]), (5, [(2, []), (8, [])])])
   end
+
+end
+
+@testset "Topological sort test" begin
+  @testset "DAG test" begin
+    temp::SparseDirectedGraph{Unsigned} = SparseDirectedGraph{Unsigned}(Unsigned(10))
+    addEdge!(temp, (Unsigned(1), Unsigned(10)))
+    addEdge!(temp, (Unsigned(1), Unsigned(5)))
+    addEdge!(temp, (Unsigned(10), Unsigned(3)))
+    addEdge!(temp, (Unsigned(10), Unsigned(4)))
+    addEdge!(temp, (Unsigned(5), Unsigned(2)))
+    addEdge!(temp, (Unsigned(5), Unsigned(8)))
+    
+    result = topologicalSort(temp, Unsigned(1))
+    index = 1
+    posMap = Dict()
+
+    for v in result
+      posMap[v] = index
+      index += 1
+    end
+
+    @test posMap[1] < posMap[10]
+    @test posMap[1] < posMap[5]
+    @test posMap[10] < posMap[3]
+    @test posMap[10] < posMap[4]
+    @test posMap[5] < posMap[2]
+    @test posMap[5] < posMap[8]
+
+    esult = topologicalSort(temp, Unsigned(2))
+    index = 1
+    posMap = Dict()
+
+    for v in result
+      posMap[v] = index
+      index += 1
+    end
+
+    @test posMap[1] < posMap[10]
+    @test posMap[1] < posMap[5]
+    @test posMap[10] < posMap[3]
+    @test posMap[10] < posMap[4]
+    @test posMap[5] < posMap[2]
+    @test posMap[5] < posMap[8]
+  end
+
+  @testset "DCG test" begin
+    temp::SparseDirectedGraph{Unsigned} = SparseDirectedGraph{Unsigned}(Unsigned(10))
+    addEdge!(temp, (Unsigned(1), Unsigned(10)))
+    addEdge!(temp, (Unsigned(1), Unsigned(5)))
+    addEdge!(temp, (Unsigned(10), Unsigned(3)))
+    addEdge!(temp, (Unsigned(10), Unsigned(4)))
+    addEdge!(temp, (Unsigned(5), Unsigned(2)))
+    addEdge!(temp, (Unsigned(5), Unsigned(8)))
+    addEdge!(temp, (Unsigned(4), Unsigned(1)))
+    
+    result = topologicalSort(temp, Unsigned(1))
+    
+    @test isnothing(result)
+  end
+
 end

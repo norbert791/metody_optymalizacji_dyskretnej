@@ -1,14 +1,26 @@
 module MyGraphPrimitives
 
 export DirectedGraph, SimpleGraph, SparseDirectedGraph, SparseSimpleGraph, getVertices,
-       getNeighbours, addEdge!, Graph, loadGraph
+       getNeighbours, getAdjacentVertices, addEdge!, Graph, loadGraph
 
 abstract type Graph end
 
 import LinearAlgebra
 
 function getVertices(graph::Graph)::UnitRange{T} end
-function getNeighbours(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned end
+
+function getNeighbours(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned
+  """
+    Get vector of vertices reachable from vertex
+  """
+end
+
+function getAdjacentVertices(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned
+  """
+    Get vector of vertices indecent to the vertex
+  """
+end #function
+
 function addEdge!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end
 
 mutable struct DirectedGraph{T <: Unsigned} <: Graph
@@ -30,6 +42,21 @@ function getNeighbours(graph::DirectedGraph{T}, vertex::T)::Vector{T} where T <:
   
   for el in 1:length(graph.vertices)
     if graph.edges[vertex, el] > 0
+      push!(result, el)
+    end #if
+  end #for
+
+  return result
+end #function
+
+function getAdjacentVertices(graph::DirectedGraph{T}, vertex::T) where T <: Unsigned
+  row = @view(graph.edges[vertex, :])
+  col = @view(graph.edges[:, vertex])
+ 
+  result = []
+  
+  for el in 1:length(graph.vertices)
+    if graph.edges[vertex, el] > 0 || graph.edges[el, vertex] > 0
       push!(result, el)
     end #if
   end #for
@@ -95,10 +122,12 @@ mutable struct SimpleGraph{T <: Unsigned} <: Graph
   end #Constructor
 end #SimpleGraph
 
-getVertices(graph::SimpleGraph)::UnitRange{Unsigned} = graph.vertices
+function getVertices(graph::SimpleGraph{T})::UnitRange{T} where T <: Unsigned  
+  return graph.vertices
+end #function
 
-function getNeighbours(graph::SimpleGraph, vertex::Unsigned)::Vector{Unsigned}
-  result::Vector{Unsigned} = []
+function getNeighbours(graph::SimpleGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
+  result::Vector{T} = []
   
   for j in graph.vertices
     if get(graph.edges, j, vertex) > 0
@@ -109,7 +138,11 @@ function getNeighbours(graph::SimpleGraph, vertex::Unsigned)::Vector{Unsigned}
   return result
 end #function
 
-function addEdge!(graph::SimpleGraph, edge::Tuple{T, T})::SimpleGraph where T <: Unsigned
+function getAdjacentVertices(graph::SimpleGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
+  return getNeighbours(graph, vertex)
+end #function
+
+function addEdge!(graph::SimpleGraph{T}, edge::Tuple{T, T})::SimpleGraph{T} where T <: Unsigned
   @boundscheck(
     if !(edge[1] in graph.vertices && edge[2] in graph.vertices)
       throw(BoundsError("Edge does not connet this graph's vertices"))
@@ -122,12 +155,15 @@ end #function
 
 mutable struct SparseDirectedGraph{T <: Unsigned} <: Graph
   vertices::UnitRange{T}
-  edges::Vector{Vector{Unsigned}}
+  edges::Vector{Vector{T}}
+  reverseEdges::Vector{Vector{T}}
 
   function SparseDirectedGraph{T}(numOfVertices::T)::SparseDirectedGraph{T} where T <: Unsigned
     vertices = 1:numOfVertices
     edges = [[] for _ in vertices]
-    return new(vertices, edges)
+    reverseEdges = [[] for _ in vertices]
+
+    return new(vertices, edges, reverseEdges)
   end #Constructor
 end #struct
 
@@ -136,15 +172,28 @@ function getVertices(graph::SparseDirectedGraph{T})::UnitRange{T} where T <: Uns
 end #function
 
 function getNeighbours(graph::SparseDirectedGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
-  return graph.edges[vertex - graph.vertices[1] + 1]
+  return graph.edges[vertex]
 end #function
 
+function getAdjacentVertices(graph::SparseDirectedGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
+  return vcat(graph.reverseEdges[vertex], graph.edges[vertex])
+end
+
 function addEdge!(graph::SparseDirectedGraph{T}, edge::Tuple{T, T})::SparseDirectedGraph{T} where T <: Unsigned
-  if edge[2] in graph.edges[edge[1] - graph.vertices[1] + 1]
+  if edge[2] in graph.edges[edge[1]]
     return graph
   end #if
-    push!(graph.edges[edge[1] - graph.vertices[1] + 1], edge[2])
-    sort!(graph.edges[edge[1] - graph.vertices[1] + 1])
+    push!(graph.edges[edge[1]], edge[2])
+    sort!(graph.edges[edge[1]])
+    temp = findfirst((x) -> x == (edge[2]), graph.reverseEdges[edge[1]])
+    if !isnothing(temp)
+      deleteat!(graph.reverseEdges[edge[1]], temp)
+    end #if
+    if !(edge[1] in graph.reverseEdges[edge[2]] || edge[1] in graph.edges[edge[2]])
+      push!(graph.reverseEdges[edge[2]], edge[1])
+      sort!(graph.reverseEdges[edge[2]])
+    end #if
+
   return graph
 end #function
 
@@ -166,6 +215,10 @@ end #function
 
 function getNeighbours(graph::SparseSimpleGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
   return graph.edges[vertex - graph.vertices[1] + 1]
+end #function
+
+function getAdjacentVertices(graph::SparseSimpleGraph{T}, vertex::T)::Vector{T} where T <: Unsigned
+  return getNeighbours(graph, vertex)
 end #function
 
 function addEdge!(graph::SparseSimpleGraph{T}, edge::Tuple{T, T})::SparseSimpleGraph{T} where T <: Unsigned

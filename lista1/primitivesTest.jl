@@ -31,6 +31,11 @@ using .MyGraphPrimitives
     @test (getNeighbours(temp, Unsigned(1))) == [10]
     @test (getNeighbours(temp, Unsigned(10))) == []
     @test (getNeighbours(temp, Unsigned(5))) == [2]
+    # getAdjacentVertices
+    @test (getAdjacentVertices(temp, Unsigned(10))) == [1]
+    @test sort((getAdjacentVertices(temp, Unsigned(1)))) == [2, 10]
+    @test (getAdjacentVertices(temp, Unsigned(5))) == [2]
+    @test sort(getAdjacentVertices(temp, Unsigned(2))) == [1, 5]
   end
 end
 
@@ -57,6 +62,12 @@ end
     @test (getNeighbours(temp, Unsigned(10))) == [1]
     @test (getNeighbours(temp, Unsigned(5))) == [2]
     @test (getNeighbours(temp, Unsigned(4))) == [8]
+    # getAdjacentVertices
+    @test (getAdjacentVertices(temp, Unsigned(2))) == [1,5]
+    @test (getAdjacentVertices(temp, Unsigned(1)))== [2, 3, 10]
+    @test (getAdjacentVertices(temp, Unsigned(10))) == [1]
+    @test (getAdjacentVertices(temp, Unsigned(5))) == [2]
+    @test (getAdjacentVertices(temp, Unsigned(4))) == [8]
   end
 end
 
@@ -103,6 +114,11 @@ end
     @test (getNeighbours(temp, Unsigned(1))) == [10]
     @test (getNeighbours(temp, Unsigned(10))) == []
     @test (getNeighbours(temp, Unsigned(5))) == [2]
+    # getAdjacentVertices
+    @test (getAdjacentVertices(temp, Unsigned(10))) == [1]
+    @test sort((getAdjacentVertices(temp, Unsigned(1)))) == [2, 10]
+    @test (getAdjacentVertices(temp, Unsigned(5))) == [2]
+    @test sort(getAdjacentVertices(temp, Unsigned(2))) == [1, 5]
   end
 end
 
@@ -129,6 +145,12 @@ end
     @test (getNeighbours(temp, Unsigned(10))) == [1]
     @test (getNeighbours(temp, Unsigned(5))) == [2]
     @test (getNeighbours(temp, Unsigned(4))) == [8]
+    # getAdjacentVertices
+    @test (getAdjacentVertices(temp, Unsigned(2))) == [1,5]
+    @test (getAdjacentVertices(temp, Unsigned(1)))== [2, 3, 10]
+    @test (getAdjacentVertices(temp, Unsigned(10))) == [1]
+    @test (getAdjacentVertices(temp, Unsigned(5))) == [2]
+    @test (getAdjacentVertices(temp, Unsigned(4))) == [8]
   end
 end
 

@@ -3,7 +3,7 @@ module MyGraphAlgorithms
 include("graphPrimitives.jl")
 using DataStructures
 
-export dfsOrder, dfsTree, topologicalSort
+export dfsOrder, dfsTree, topologicalSort, strongComponents, isBiparte
 
 function dfsOrder(graph::R, vertex::T)::Vector{T} where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
   vertices = MyGraphPrimitives.getVertices(graph)
@@ -141,6 +141,95 @@ function topologicalSort(graph::R, vertex::T)::Union{Vector{T}, Nothing} where {
   reverse!(result)
 
   return result
+end #function
+
+function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
+  index = 1
+  offset = MyGraphPrimitives.getVertices(graph)[1] - 1
+  len = length(MyGraphPrimitives.getVertices(graph))
+  stack = []
+  vertexIndex = zeros(len)
+  vertexLowlink = zeros(len)
+  vertexOnStack = zeros(Bool, len)
+  result = Set([])
+
+  function priv(vertex)
+    vertexIndex[vertex - offset] = index
+    vertexLowlink[vertex - offset] = index
+    index += 1
+    push!(stack, vertex)
+    vertexOnStack[vertex - offset] = true
+
+    for w in MyGraphPrimitives.getNeighbours(graph, vertex)
+      if vertexIndex[w - offset] == 0
+        push!(result, priv(w))
+        vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
+      elseif vertexOnStack[w - offset]
+        vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexIndex[w - offset])
+      end #if
+    end #for
+
+    if vertexLowlink[vertex - offset] == vertexIndex[vertex - offset]
+      newComponent = Set()
+      temp = pop!(stack)
+      vertexOnStack[temp - offset] = false
+      push!(newComponent, temp)
+      while temp != vertex
+        temp = pop!(stack)
+        vertexOnStack[temp - offset] = false
+        push!(newComponent, temp)
+      end #while
+
+      return newComponent
+    end #if
+
+    return Set() #This line is effectively unreachable
+  end #function
+
+  for v in MyGraphPrimitives.getVertices(graph)
+    if vertexIndex[v - offset] == 0
+      push!(result, priv(v))
+    end #if
+  end #for
+
+  return result
+end #function
+
+function isBiparte(graph::G) where {G <: MyGraphPrimitives.Graph}
+  vertices = MyGraphPrimitives.getVertices(graph)
+  len = length(vertices)
+  start = vertices[1]
+  colorArr::Vector{Int8} = zeros(Int8, len)
+  positiveColor = []
+  negativeColor = []
+
+  function priv(vertex::T, color::Int8)::Bool where T <: Unsigned
+    colorArr[vertex] = color
+    push!(color == 1 ? positiveColor : negativeColor, vertex)
+
+    for v in MyGraphPrimitives.getAdjacentVertices(graph, vertex)
+      if colorArr[v - start + 1] == color
+        return false
+      elseif colorArr[v - start + 1] == 0
+        if !priv(v, -color)
+          return false
+        end #if
+      end #if
+    end #for
+
+    return true
+  end #function
+
+  for v in vertices
+    if colorArr[v] == 0
+      if !priv(v, Int8(1))
+        return nothing
+      end #if
+    end #if
+  end #for
+
+  return positiveColor, negativeColor
+
 end #function
 
 end #module

@@ -3,7 +3,7 @@ module MyGraphAlgorithms
 include("graphPrimitives.jl")
 using DataStructures
 
-export dfsOrder, dfsTree, topologicalSort, strongComponents, isBiparte
+export dfsOrder, dfsTree, topologicalSort, strongComponents, isBiparte, isBiparteIterative, strongComponentsIterative
 
 function dfsOrder(graph::R, vertex::T)::Vector{T} where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
   vertices = MyGraphPrimitives.getVertices(graph)
@@ -97,16 +97,16 @@ function bfsTree(graph::R, vertex::T) where {R <: MyGraphPrimitives.Graph, T <: 
 end #function
 =#
 
-function topologicalSort(graph::R, vertex::T)::Union{Vector{T}, Nothing} where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
+function topologicalSort(graph::R) where {R <: MyGraphPrimitives.Graph}
   vertices = MyGraphPrimitives.getVertices(graph)
   len = length(vertices)
   start = vertices[1]
-  result::Union{Vector{T}, Nothing} = []
+  result = []
   #0-unmarked; 1-temporary; 2-permanent
   marking = zeros(UInt8, len)
   unmarkedLeft = len
 
-  function priv(vertex::T)::Bool #cycle found
+  function priv(vertex)::Bool #cycle found
     if marking[vertex - start + 1] == UInt(2)
       return false
     end #if
@@ -131,6 +131,8 @@ function topologicalSort(graph::R, vertex::T)::Union{Vector{T}, Nothing} where {
   end #function
 
   index = start
+  index = convert(typeof(vertices[1]), index)
+
   while unmarkedLeft > 0
     if priv(index)
       return nothing
@@ -151,7 +153,7 @@ function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
   vertexIndex = zeros(len)
   vertexLowlink = zeros(len)
   vertexOnStack = zeros(Bool, len)
-  result = Set([])
+  result = Set()
 
   function priv(vertex)
     vertexIndex[vertex - offset] = index
@@ -162,7 +164,10 @@ function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
 
     for w in MyGraphPrimitives.getNeighbours(graph, vertex)
       if vertexIndex[w - offset] == 0
-        push!(result, priv(w))
+        temp = priv(w)
+        if !isempty(temp)
+          push!(result, temp)
+        end #if
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
       elseif vertexOnStack[w - offset]
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexIndex[w - offset])
@@ -183,8 +188,92 @@ function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
       return newComponent
     end #if
 
-    return Set() #This line is effectively unreachable
+    return Set()
   end #function
+
+  for v in MyGraphPrimitives.getVertices(graph)
+    if vertexIndex[v - offset] == 0
+      push!(result, priv(v))
+    end #if
+  end #for
+
+  return result
+end #function
+
+mutable struct Snapshot
+  vertex
+  returnValue
+  stage
+  neighbourhood
+end #struct
+
+function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph}
+  index = 1
+  offset = MyGraphPrimitives.getVertices(graph)[1] - 1
+  len = length(MyGraphPrimitives.getVertices(graph))
+  stack = []
+  vertexIndex = zeros(len)
+  vertexLowlink = zeros(len)
+  vertexOnStack = zeros(Bool, len)
+  result = Set([])
+
+  function priv(vertex)
+    
+    privResult = Set()
+    callStack = []
+    push!(callStack, Snapshot(vertex, copy(privResult), 0, []))
+
+    while !isempty(callStack)
+      currentSnap::Snapshot = pop(callStack)
+      vertex = callStack.vertex
+
+      if currentSnap.stage == 0
+        vertexIndex[vertex - offset] = index
+        vertexLowlink[vertex - offset] = index
+        index += 1
+        push!(stack, vertex)
+        vertexOnStack[callStack.vertex - offset] = true
+        currentSnap.neighbourhood = MyGraphPrimitives.getNeighbours(graph, currentSnap.vertex)
+        currentSnap.stage += 1
+        push!(callStack, currentSnap)
+        continue
+      elseif currentSnap.stage <= length(currentSnap.neighbourhood)
+        w = currentSnap.neighbourhood[currentSnap.stage]
+        currentSnap.stage += 1
+        push!(callStack, currentSnap)
+        if vertexIndex[w - offset] == 0
+          push!(callStack, Snapshot(w, Set(), 0, []))
+        elseif vertexOnStack[w - offset]
+          vertexLowlink[vertex] = min(vertexLowlink[vertex - offset], vertexIndex[w - offset])
+        end #if
+        continue
+      else #currentSnap.stage > length(currentSnap.neighbourhood)
+        currentSnap.stage += 1
+        if vertexLowlink[vertex - offset] == vertexIndex[vertex - offset]
+          newComponent = Set()
+          temp = pop!(stack)
+          vertexOnStack[temp - offset] = false
+          push!(newComponent, temp)
+          while temp != vertex
+            temp = pop!(stack)
+            vertexOnStack[temp - offset] = false
+            push!(newComponent, temp)
+          end #while
+    
+          currentSnap.result = newComponent
+          privResult = newComponent
+        end #if
+        if !isempty(currentSnap.result)
+          push!(result, currentSnap)
+        end #if
+        vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
+        continue
+      end #elseif
+    end #while
+
+    return privResult
+  end #function
+
 
   for v in MyGraphPrimitives.getVertices(graph)
     if vertexIndex[v - offset] == 0
@@ -216,6 +305,48 @@ function isBiparte(graph::G) where {G <: MyGraphPrimitives.Graph}
         end #if
       end #if
     end #for
+
+    return true
+  end #function
+
+  for v in vertices
+    if colorArr[v] == 0
+      if !priv(v, Int8(1))
+        return nothing
+      end #if
+    end #if
+  end #for
+
+  return positiveColor, negativeColor
+
+end #function
+
+function isBiparteIterative(graph::G) where {G <: MyGraphPrimitives.Graph}
+  vertices = MyGraphPrimitives.getVertices(graph)
+  len = length(vertices)
+  start = vertices[1]
+  colorArr::Vector{Int8} = zeros(Int8, len)
+  positiveColor = []
+  negativeColor = []
+
+  function priv(vertex::T, color::Int8)::Bool where T <: Unsigned
+    queue::Vector{T} = []
+    push!(queue, vertex)
+    colorArr[vertex - start + 1] = color
+    push!(color == 1 ? positiveColor : negativeColor, vertex)
+
+    while !isempty(queue)
+      temp = popfirst!(queue)
+      for v in MyGraphPrimitives.getAdjacentVertices(graph, temp)
+        if colorArr[v - start + 1] == colorArr[temp - start + 1]
+          return false
+        elseif colorArr[v - start + 1] == 0
+          colorArr[v - start + 1] = -colorArr[temp - start + 1]
+          push!(colorArr[v - start + 1] == 1 ? positiveColor : negativeColor, v)
+          push!(queue, v)
+        end #if
+      end #for
+    end #while
 
     return true
   end #function

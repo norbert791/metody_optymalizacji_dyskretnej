@@ -13,12 +13,14 @@ function getNeighbours(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned
   """
     Get vector of vertices reachable from vertex
   """
+  return []
 end
 
 function getAdjacentVertices(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned
   """
     Get vector of vertices indecent to the vertex
   """
+  return []
 end #function
 
 function addEdge!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end

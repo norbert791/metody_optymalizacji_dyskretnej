@@ -75,7 +75,7 @@ end
     addEdge!(temp, (Unsigned(5), Unsigned(2)))
     addEdge!(temp, (Unsigned(5), Unsigned(8)))
     
-    result = topologicalSort(temp, Unsigned(1))
+    result = topologicalSort(temp)
     index = 1
     posMap = Dict()
 
@@ -91,7 +91,7 @@ end
     @test posMap[5] < posMap[2]
     @test posMap[5] < posMap[8]
 
-    esult = topologicalSort(temp, Unsigned(2))
+    esult = topologicalSort(temp)
     index = 1
     posMap = Dict()
 
@@ -118,7 +118,7 @@ end
     addEdge!(temp, (Unsigned(5), Unsigned(8)))
     addEdge!(temp, (Unsigned(4), Unsigned(1)))
     
-    result = topologicalSort(temp, Unsigned(1))
+    result = topologicalSort(temp)
     
     @test isnothing(result)
   end
@@ -197,5 +197,61 @@ end
     addEdge!(temp, (Unsigned(1), Unsigned(2)))
 
     @test isnothing(isBiparte(temp))
+  end
+end
+
+@testset "Biparte iterative test" begin
+  @testset "SparseDirectedGraph test" begin
+    temp::SparseDirectedGraph{Unsigned} = SparseDirectedGraph{Unsigned}(Unsigned(10))
+    addEdge!(temp, (Unsigned(1), Unsigned(4)))
+    addEdge!(temp, (Unsigned(1), Unsigned(5)))
+    addEdge!(temp, (Unsigned(1), Unsigned(6)))
+    addEdge!(temp, (Unsigned(2), Unsigned(4)))
+    addEdge!(temp, (Unsigned(2), Unsigned(5)))
+    addEdge!(temp, (Unsigned(2), Unsigned(6)))
+    addEdge!(temp, (Unsigned(3), Unsigned(4)))
+    addEdge!(temp, (Unsigned(3), Unsigned(5)))
+    addEdge!(temp, (Unsigned(3), Unsigned(6)))
+
+    left, right = isBiparteIterative(temp)
+    sort!(left); sort!(right)
+    isolated = [7, 8, 9, 10]
+    red = [1, 2, 3]
+    blue = [4, 5, 6]
+    
+    @test all((x) -> x in left || x in right, isolated)
+    @test all((x) -> x in left, red) || all((x) -> x in right, red)
+    @test all((x) -> x in left, blue) || all((x) -> x in right, blue)
+
+    addEdge!(temp, (Unsigned(1), Unsigned(2)))
+
+    @test isnothing(isBiparteIterative(temp))
+  end
+
+  @testset "SparseSimpleGraph test" begin
+    temp::SparseSimpleGraph{Unsigned} = SparseSimpleGraph{Unsigned}(Unsigned(10))
+    addEdge!(temp, (Unsigned(1), Unsigned(4)))
+    addEdge!(temp, (Unsigned(1), Unsigned(5)))
+    addEdge!(temp, (Unsigned(1), Unsigned(6)))
+    addEdge!(temp, (Unsigned(2), Unsigned(4)))
+    addEdge!(temp, (Unsigned(2), Unsigned(5)))
+    addEdge!(temp, (Unsigned(2), Unsigned(6)))
+    addEdge!(temp, (Unsigned(3), Unsigned(4)))
+    addEdge!(temp, (Unsigned(3), Unsigned(5)))
+    addEdge!(temp, (Unsigned(3), Unsigned(6)))
+
+    left, right = isBiparteIterative(temp)
+    sort!(left); sort!(right)
+    isolated = [7, 8, 9, 10]
+    red = [1, 2, 3]
+    blue = [4, 5, 6]
+    
+    @test all((x) -> x in left || x in right, isolated)
+    @test all((x) -> x in left, red) || all((x) -> x in right, red)
+    @test all((x) -> x in left, blue) || all((x) -> x in right, blue)
+
+    addEdge!(temp, (Unsigned(1), Unsigned(2)))
+
+    @test isnothing(isBiparteIterative(temp))
   end
 end

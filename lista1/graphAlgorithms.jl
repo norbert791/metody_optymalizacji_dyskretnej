@@ -3,7 +3,8 @@ module MyGraphAlgorithms
 include("graphPrimitives.jl")
 using DataStructures
 
-export dfsOrder, dfsTree, topologicalSort, strongComponents, isBiparte, isBiparteIterative, strongComponentsIterative
+export dfsOrder, dfsTree, topologicalSort, strongComponents, isBiparte, isBiparteIterative,
+       strongComponentsIterative, bfsOrder, bfsTree
 
 function dfsOrder(graph::R, vertex::T)::Vector{T} where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
   vertices = MyGraphPrimitives.getVertices(graph)
@@ -32,23 +33,23 @@ function dfsTree(graph::R, vertex::T) where {R <: MyGraphPrimitives.Graph, T <: 
   vertices = MyGraphPrimitives.getVertices(graph)
   len = length(vertices)
   start = vertices[1]
+  result::Vector{Tuple{Union{Nothing, T}, T}} = []
   markedVertices = zeros(Bool, len)
+  stack::Stack{Tuple{Union{Nothing, T}, T}} = Stack{Tuple{Union{Nothing, T}, T}}()
+  push!(stack, (nothing, vertex))
 
-  return dfsTreePriv(graph, vertex, markedVertices, start)
-end #function
-
-function dfsTreePriv(graph::R, vertex::T, visited::Vector{Bool}, start::T) where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
-  result = []
-  visited[vertex - start + 1] = true
-
-  for v in MyGraphPrimitives.getNeighbours(graph, vertex)
-    if !visited[v - start + 1]
-      temp = dfsTreePriv(graph, v, visited, start)
+  while length(stack) > 0
+    temp = pop!(stack)
+    if !markedVertices[temp[2] - start  + 1]
+      markedVertices[temp[2] - start + 1] = true
       push!(result, temp)
+      for neighbour in MyGraphPrimitives.getNeighbours(graph, temp[2])
+        push!(stack, (temp[2], neighbour))
+      end #for
     end #if
-  end #for
+  end #while
 
-  return (vertex, result)
+  return result
 end #function
 
 function bfsOrder(graph::R, vertex::T)::Vector{T} where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
@@ -58,44 +59,46 @@ function bfsOrder(graph::R, vertex::T)::Vector{T} where {R <: MyGraphPrimitives.
   result::Vector{T} = []
   markedVertices = zeros(Bool, len)
   queue::Queue{T} = Queue{T}()
-  push!(queue, vertex)    
+  enqueue!(queue, vertex)    
   
   while !isempty(queue)
-    temp = popfirst!(queue)
+    temp = dequeue!(queue)
     if !markedVertices[temp - start + 1]
       push!(result, temp)
       markedVertices[temp - start + 1] = true
       for v in MyGraphPrimitives.getNeighbours(graph, temp)
-        push!(queue, v)
+        enqueue!(queue, v)
       end #for
     end #if
   end #while
 
+  return result
 end #function
 
-#=
+
 function bfsTree(graph::R, vertex::T) where {R <: MyGraphPrimitives.Graph, T <: Unsigned}
   vertices = MyGraphPrimitives.getVertices(graph)
   len = length(vertices)
   start = vertices[1]
-  result::Vector{T} = []
+  result::Vector{Tuple{Union{Nothing, T}, T}} = []
   markedVertices = zeros(Bool, len)
-  queue::Queue{T} = Queue{T}()
-  push!(queue, vertex)    
+  queue::Queue{Tuple{Union{Nothing, T}, T}} = Queue{Tuple{Union{Nothing, T}, T}}()
+  enqueue!(queue, (nothing, vertex))    
   
   while !isempty(queue)
-    temp = popfirst!(queue)
-    if !markedVertices[temp - start + 1]
+    temp = dequeue!(queue)
+    if !markedVertices[temp[2] - start + 1]
       push!(result, temp)
-      markedVertices[temp - start + 1] = true
-      for v in MyGraphPrimitives.getNeighbours(graph, temp)
-        push!(queue, v)
+      markedVertices[temp[2] - start + 1] = true
+      for v in MyGraphPrimitives.getNeighbours(graph, temp[2])
+        enqueue!(queue, (temp[2], v))
       end #for
     end #if
   end #while
 
+  return result
 end #function
-=#
+
 
 function topologicalSort(graph::R) where {R <: MyGraphPrimitives.Graph}
   vertices = MyGraphPrimitives.getVertices(graph)
@@ -252,12 +255,6 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
       elseif currentSnap.stage < 0
         currentSnap.stage = -currentSnap.stage
         push!(callStack, currentSnap)
-        #currentSnap.returnValue = privResult
-        
-        # if !isempty(currentSnap.returnValue)
-        #   push!(result, currentSnap.returnValue)
-        # end #if
-        
         w = currentSnap.neighbourhood[currentSnap.stage]
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
         currentSnap.stage += 1
@@ -278,15 +275,11 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
             push!(newComponent, temp)
           end #while
           
-          # currentSnap.returnValue = newComponent
           push!(result, newComponent)
-          # privResult = newComponent
           continue
         end #if
       end #if
     end #while
-
-    # return privResult
   end #function
 
 

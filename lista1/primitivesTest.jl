@@ -155,33 +155,41 @@ end
 end
 
 @testset "Graph Load test" begin
-  t = loadGraph("primitivesTestDep1.txt", false)
-  @test getNeighbours(t, UInt32(1)) == [2]
-  @test getNeighbours(t, UInt32(8)) == [10]
-  @test getNeighbours(t, UInt32(4)) == [5, 9]
-  @test getNeighbours(t, UInt32(5)) == [4, 9]
-
-  t = loadGraph("primitivesTestDep1.txt", true)
-  @test getNeighbours(t, UInt32(1)) == [2]
-  @test getNeighbours(t, UInt32(4)) == [5, 9]
-  @test getNeighbours(t, UInt32(8)) == [10]
-  @test getNeighbours(t, UInt32(5)) == [4, 9]
+  @testset "Directed" begin
+    t = loadGraph("primitivesTestDeps/primitivesTestDep1.txt", false)
+    @test getNeighbours(t, UInt32(1)) == [2]
+    @test getNeighbours(t, UInt32(8)) == [10]
+    @test getNeighbours(t, UInt32(4)) == [5, 9]
+    @test getNeighbours(t, UInt32(5)) == [9]
+  end
   
-  t = loadGraph("primitivesTestDep2.txt", false)
-  @test getNeighbours(t, UInt32(1))  == [2]
-  @test getNeighbours(t, UInt32(4))  == [5, 9]
-  @test getNeighbours(t, UInt32(8))  == [10]
-  @test getNeighbours(t, UInt32(5))  == [4, 9]
-  @test getNeighbours(t, UInt32(2))  == [1]
-  @test getNeighbours(t, UInt32(10)) == [8]
-  @test getNeighbours(t, UInt32(9))  == [4, 5]
+  @testset "Directed sparse" begin
+    t = loadGraph("primitivesTestDeps/primitivesTestDep1.txt", true)
+    @test getNeighbours(t, UInt32(1)) == [2]
+    @test getNeighbours(t, UInt32(4)) == [5, 9]
+    @test getNeighbours(t, UInt32(8)) == [10]
+    @test getNeighbours(t, UInt32(5)) == [9]
+  end
 
-  t = loadGraph("primitivesTestDep2.txt", true)
-  @test getNeighbours(t, UInt32(1))  == [2]
-  @test getNeighbours(t, UInt32(4))  == [5, 9]
-  @test getNeighbours(t, UInt32(8))  == [10]
-  @test getNeighbours(t, UInt32(5))  == [4, 9]
-  @test getNeighbours(t, UInt32(2))  == [1]
-  @test getNeighbours(t, UInt32(10)) == [8]
-  @test getNeighbours(t, UInt32(9))  == [4, 5]
+  @testset "Undirected" begin
+    t = loadGraph("primitivesTestDeps/primitivesTestDep2.txt", false)
+    @test getNeighbours(t, UInt32(1))  == [2]
+    @test getNeighbours(t, UInt32(4))  == [5, 9]
+    @test getNeighbours(t, UInt32(8))  == [10]
+    @test getNeighbours(t, UInt32(5))  == [4, 9]
+    @test getNeighbours(t, UInt32(2))  == [1]
+    @test getNeighbours(t, UInt32(10)) == [8]
+    @test getNeighbours(t, UInt32(9))  == [4, 5]
+  end
+  
+  @testset "Undirected sparse" begin
+    t = loadGraph("primitivesTestDeps/primitivesTestDep2.txt", true)
+    @test getNeighbours(t, UInt32(1))  == [2]
+    @test getNeighbours(t, UInt32(4))  == [5, 9]
+    @test getNeighbours(t, UInt32(8))  == [10]
+    @test getNeighbours(t, UInt32(5))  == [4, 9]
+    @test getNeighbours(t, UInt32(2))  == [1]
+    @test getNeighbours(t, UInt32(10)) == [8]
+    @test getNeighbours(t, UInt32(9))  == [4, 5]
+  end
 end

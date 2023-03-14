@@ -7,7 +7,9 @@ abstract type Graph end
 
 import LinearAlgebra
 
-function getVertices(graph::Graph)::UnitRange{T} end
+#=
+BEGIN INTERFACE
+function getVertices(graph::Graph)::UnitRange{T} where T <: Unsigned end
 
 function getNeighbours(graph::Graph, vertex::T)::Vector{T} where T <: Unsigned
   """
@@ -21,9 +23,11 @@ function getAdjacentVertices(graph::Graph, vertex::T)::Vector{T} where T <: Unsi
     Get vector of vertices indecent to the vertex
   """
   return []
-end #function
+# end #function
 
 function addEdge!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end
+END INTERFACE
+=#
 
 mutable struct DirectedGraph{T <: Unsigned} <: Graph
   vertices::UnitRange{T}

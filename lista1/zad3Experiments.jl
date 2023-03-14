@@ -4,13 +4,13 @@ using .MyGraphAlgorithms
 using .MyGraphAlgorithms.MyGraphPrimitives
 
 function main()
-  files = readdir("./aod_testy1/4/", join=true)
+  files = readdir("./aod_testy1/3/", join=true)
 
   #Compute times
   for f in files
     g = loadGraph(f, true)
     println("Computing: $f")
-    @time isBiparteIterative(g)
+    @time strongComponentsIterative(g)
   end #for
 end
 

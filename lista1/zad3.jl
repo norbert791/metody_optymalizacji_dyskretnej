@@ -6,7 +6,7 @@ using .MyGraphAlgorithms.MyGraphPrimitives
 function main()
   try
     graph = loadGraph(ARGS[1], true)
-    res = strongComponents(graph)
+    res = strongComponentsIterative(graph)
     if length(getVertices(graph)) <= 200
       println("Partition (of power $(length(res))) found: $res")
     else

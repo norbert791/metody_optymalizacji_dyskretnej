@@ -221,12 +221,13 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
     
     privResult = Set()
     callStack = []
-    push!(callStack, Snapshot(vertex, copy(privResult), 0, []))
+    push!(callStack, Snapshot(vertex, Set(), 0, []))
 
     while !isempty(callStack)
       currentSnap::Snapshot = pop!(callStack)
       vertex = currentSnap.vertex
 
+      #State: Before recursive call
       if currentSnap.stage == 0
         vertexIndex[vertex - offset] = index
         vertexLowlink[vertex - offset] = index
@@ -237,17 +238,32 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
         currentSnap.stage += 1
         push!(callStack, currentSnap)
         continue
-      elseif currentSnap.stage <= length(currentSnap.neighbourhood)
+      #State: Recursive call in for loop
+      elseif currentSnap.stage <= length(currentSnap.neighbourhood) && currentSnap.stage > 0
         w = currentSnap.neighbourhood[currentSnap.stage]
         currentSnap.stage += 1
         push!(callStack, currentSnap)
         if vertexIndex[w - offset] == 0
+          currentSnap.stage = -currentSnap.stage + 1
           push!(callStack, Snapshot(w, Set(), 0, []))
         elseif vertexOnStack[w - offset]
           vertexLowlink[vertex] = min(vertexLowlink[vertex - offset], vertexIndex[w - offset])
         end #if
         continue
-      else #currentSnap.stage > length(currentSnap.neighbourhood)
+      #State: Return from recursive call in for loop
+      elseif currentSnap.stage < 0
+        currentSnap.stage = -currentSnap.stage
+        push!(callStack, currentSnap)
+        currentSnap.returnValue = privResult
+        if !isempty(currentSnap.returnValue)
+          push!(result, currentSnap.returnValue)
+        end #if
+        w = currentSnap.neighbourhood[currentSnap.stage]
+        vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
+        currentSnap.stage += 1
+        continue
+      #State: Post for loop
+      else currentSnap.stage > length(currentSnap.neighbourhood)
         currentSnap.stage += 1
         if vertexLowlink[vertex - offset] == vertexIndex[vertex - offset]
           newComponent = Set()
@@ -259,14 +275,9 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
             vertexOnStack[temp - offset] = false
             push!(newComponent, temp)
           end #while
-    
           currentSnap.returnValue = newComponent
           privResult = newComponent
         end #if
-        if !isempty(currentSnap.returnValue)
-          push!(result, currentSnap.returnValue)
-        end #if
-        continue
       end #if
     end #while
 

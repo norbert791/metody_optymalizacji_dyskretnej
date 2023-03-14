@@ -1,0 +1,12 @@
+Computing: ./aod_testy1/3/g3-1.txt
+  0.182244 seconds (427.25 k allocations: 22.320 MiB, 99.83% compilation time)
+Computing: ./aod_testy1/3/g3-2.txt
+  0.022458 seconds (20.21 k allocations: 908.646 KiB, 98.75% compilation time)
+Computing: ./aod_testy1/3/g3-3.txt
+  0.014211 seconds (372.95 k allocations: 6.129 MiB, 47.84% gc time)
+Computing: ./aod_testy1/3/g3-4.txt
+  0.628059 seconds (30.06 M allocations: 463.171 MiB, 4.46% gc time)
+Computing: ./aod_testy1/3/g3-5.txt
+ 56.383114 seconds (3.23 G allocations: 48.143 GiB, 9.28% gc time)
+Computing: ./aod_testy1/3/g3-6.txt
+10922.021499 seconds (288.91 G allocations: 4.205 TiB, 6.21% gc time)

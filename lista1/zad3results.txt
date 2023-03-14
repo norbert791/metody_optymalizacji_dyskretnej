@@ -1,3 +1,4 @@
+#Results before optimizations
 Computing: ./aod_testy1/3/g3-1.txt
   0.182244 seconds (427.25 k allocations: 22.320 MiB, 99.83% compilation time)
 Computing: ./aod_testy1/3/g3-2.txt

@@ -164,10 +164,7 @@ function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
 
     for w in MyGraphPrimitives.getNeighbours(graph, vertex)
       if vertexIndex[w - offset] == 0
-        temp = priv(w)
-        if !isempty(temp)
-          push!(result, temp)
-        end #if
+        priv(w)
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
       elseif vertexOnStack[w - offset]
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexIndex[w - offset])
@@ -185,15 +182,15 @@ function strongComponents(graph::G) where {G <: MyGraphPrimitives.Graph}
         push!(newComponent, temp)
       end #while
 
-      return newComponent
+      push!(result, newComponent)
     end #if
 
-    return Set()
+    return
   end #function
 
   for v in MyGraphPrimitives.getVertices(graph)
     if vertexIndex[v - offset] == 0
-      push!(result, priv(v))
+      priv(v) # push!(result, priv(v))
     end #if
   end #for
 
@@ -202,7 +199,7 @@ end #function
 
 mutable struct Snapshot
   vertex
-  returnValue
+  returnValue::Set
   stage
   neighbourhood
 end #struct
@@ -215,11 +212,11 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
   vertexIndex = zeros(len)
   vertexLowlink = zeros(len)
   vertexOnStack = zeros(Bool, len)
-  result = Set([])
+  result::Set = Set()
 
   function priv(vertex)
     
-    privResult = Set()
+    #privResult::Set() = []
     callStack = []
     push!(callStack, Snapshot(vertex, Set(), 0, []))
 
@@ -243,6 +240,7 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
         w = currentSnap.neighbourhood[currentSnap.stage]
         currentSnap.stage += 1
         push!(callStack, currentSnap)
+        
         if vertexIndex[w - offset] == 0
           currentSnap.stage = -currentSnap.stage + 1
           push!(callStack, Snapshot(w, Set(), 0, []))
@@ -254,10 +252,12 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
       elseif currentSnap.stage < 0
         currentSnap.stage = -currentSnap.stage
         push!(callStack, currentSnap)
-        currentSnap.returnValue = privResult
-        if !isempty(currentSnap.returnValue)
-          push!(result, currentSnap.returnValue)
-        end #if
+        #currentSnap.returnValue = privResult
+        
+        # if !isempty(currentSnap.returnValue)
+        #   push!(result, currentSnap.returnValue)
+        # end #if
+        
         w = currentSnap.neighbourhood[currentSnap.stage]
         vertexLowlink[vertex - offset] = min(vertexLowlink[vertex - offset], vertexLowlink[w - offset])
         currentSnap.stage += 1
@@ -265,31 +265,39 @@ function strongComponentsIterative(graph::G) where {G <: MyGraphPrimitives.Graph
       #State: Post for loop
       else currentSnap.stage > length(currentSnap.neighbourhood)
         currentSnap.stage += 1
+        
         if vertexLowlink[vertex - offset] == vertexIndex[vertex - offset]
           newComponent = Set()
           temp = pop!(stack)
           vertexOnStack[temp - offset] = false
           push!(newComponent, temp)
+          
           while temp != vertex
             temp = pop!(stack)
             vertexOnStack[temp - offset] = false
             push!(newComponent, temp)
           end #while
-          currentSnap.returnValue = newComponent
-          privResult = newComponent
+          
+          # currentSnap.returnValue = newComponent
+          push!(result, newComponent)
+          # privResult = newComponent
+          continue
         end #if
       end #if
     end #while
 
-    return privResult
+    # return privResult
   end #function
 
 
   for v in MyGraphPrimitives.getVertices(graph)
     if vertexIndex[v - offset] == 0
-      push!(result, priv(v))
+      # push!(result, priv(v))
+        priv(v)
     end #if
   end #for
+
+  # unique!(result)
 
   return result
 end #function

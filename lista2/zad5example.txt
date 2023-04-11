@@ -1,0 +1,31 @@
+4
+3
+60
+Demand
+400
+100
+150
+500
+MachineTime
+60
+60
+60
+MachineCost
+2
+2
+3
+ProductValue
+9
+7
+6
+5
+ProductCost
+4
+1
+1
+1
+ProductTime
+5 10 6
+3 6 4
+4 5 3
+4 2 1

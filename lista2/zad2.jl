@@ -27,22 +27,22 @@ function solveModel(zad :: Zad2Model)
   edges = zad.edges
 
   @variable(model, x[i = 1:numberOfCities, j = 1:numberOfCities], binary=true)
-  @constraint(model, [i = 1:numberOfCities, j = 1:numberOfCities; i != startIndex && i != endIndex],
-              (sum(x[i, j] * ((i, j) in edges)) - sum(x[j, i] * ((j, i) in edges))) == 0)
-  @constraint(model, [i = startIndex, j = 1:numberOfCities],
-              (sum(x[i, j] * ((i, j) in edges)) - sum(x[j, i] * ((j, i) in edges))) == 1)
-  @constraint(model, [i = 1:numberOfCities, j = endIndex],
-              (sum(x[i, j] * ((i, j) in edges)) - sum(x[j, i] * ((j, i) in edges))) == -1)
+  @constraint(model, [i = 1:numberOfCities; i != startIndex && i != endIndex],
+              sum(x[i, j] * ((i, j) in edges) for j in 1:numberOfCities) - sum(x[j, i] * ((j, i) in edges) for j in 1:numberOfCities) == 0)
+  @constraint(model, sum(x[startIndex, j] * ((startIndex, j) in edges) for j in 1:numberOfCities) -
+                     sum(x[j, startIndex] * ((j, startIndex) in edges) for j in 1:numberOfCities) == 1)
+  @constraint(model, sum(x[endIndex, j] * ((endIndex, j) in edges) for j in 1:numberOfCities) -
+                     sum(x[j, endIndex] * ((j, endIndex) in edges) for j in 1:numberOfCities) == -1)
 
-  @constraint(model, [i = 1:numberOfCities, j = 1:numberOfCities; (i,j) in edges], sum(x[i, j] * timeMatrix) <= timeTreshhold)
+  @constraint(model, sum(x[i, j] * timeMatrix[i, j] for i in 1:numberOfCities for j in 1:numberOfCities) <= timeTreshhold)
   @objective(model, Min, sum(x[i, j] * costMatrix[i, j] for i in 1:numberOfCities for j in 1:numberOfCities))
 
   @info "Starting model"
   print(model)
   @info "Optimization"
   optimize!(model)
-  # @info "Optimized model vars"
-  # println(value.(x))
+  @info "Optimized model vars"
+  println(value.(x))
 end #solveModel
 
 function main()
@@ -61,17 +61,14 @@ function main()
       throw(error("Incorrect format"))
     end #if
     
-    @show "Edges"
-
     temp = readline(file)
     while temp != "Times"
       tempArr= split(temp)
       tempArr = map(x -> parse(Int, x), tempArr)
-      push!(edges, tempArr[1], tempArr[2])
+      push!(edges, (tempArr[1], tempArr[2]))
       temp = readline(file)
     end #while
 
-    @show "Times"
     temp = readline(file)
 
     while temp != "Costs"
@@ -80,8 +77,6 @@ function main()
       times[tempArr[1], tempArr[2]] = tempArr[3]
       temp = readline(file)
     end #while
-
-    @show "Costs"
 
     for l in readlines(file)
       tempArr= split(l)

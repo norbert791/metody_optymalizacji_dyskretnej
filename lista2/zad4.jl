@@ -8,10 +8,6 @@ struct ModelData
   occupiedSqueres
 end #ModelData
 
-function countNeighbours()
-  
-end
-
 function solveModel(data :: ModelData)
   numOfRows = data.numOfRows
   numOfCols = data.numOfCols
@@ -21,7 +17,7 @@ function solveModel(data :: ModelData)
   model = Model(HiGHS.Optimizer)
   @variable(model, x[i=1:numOfRows, j=1:numOfCols], binary=true)
   @constraint(model, [i=1:numOfRows, j=1:numOfCols; (i, j) in occupiedSqueres], x[i, j] == 0)
-  @constraint(model, [(i,j) in occupiedSqueres], sum(x[i, j] for i in max(1, i - k):min(numOfRows, i + k)) + sum(x[i, j] for j in max(1, j - k):min(numOfRows, j + k)) >= 1)
+  @constraint(model, [(i,j) in occupiedSqueres], sum(x[i, j] for i in max(1, i - k):min(numOfRows, i + k)) + sum(x[i, j] for j in max(1, j - k):min(numOfCols, j + k)) >= 1)
   @objective(model, Min, sum(x[i, j] for i in 1:numOfRows for j in 1:numOfCols))
 
   @info "Starting model"

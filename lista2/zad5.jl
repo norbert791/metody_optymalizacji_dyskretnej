@@ -27,7 +27,7 @@ function solveModel(data :: ModelData)
   
   @variable(model, 0 <= x[i = 1:numOfProducts] <= demand[i])
   @constraint(model, [j = 1:numOfMachines], sum(prodTime[i, j] * x[i] for i in 1:numOfProducts) <= (machineTime[j] * timeProportion))
-  @objective(model, Max, sum(x[i] * (productValue[i] - productCost[i])) - sum(machineCost[j] / timeProportion))
+  @objective(model, Max, sum(x[i] * (productValue[i] - productCost[i] - sum(machineCost[j] * prodTime[i, j] / timeProportion for j in 1:numOfMachines)) for i in 1:numOfProducts))
 
   @info "Starting model"
   print(model)

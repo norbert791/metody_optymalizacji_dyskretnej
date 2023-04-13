@@ -26,15 +26,14 @@ function solveModel(zad :: Zad2Model)
   costMatrix = zad.costMatrix
   edges = zad.edges
 
-  @variable(model, x[i = 1:numberOfCities, j = 1:numberOfCities], binary=true)
+  @variable(model, x[i = 1:numberOfCities, j = 1:numberOfCities])
   @constraint(model, [i = 1:numberOfCities; i != startIndex && i != endIndex],
               sum(x[i, j] * ((i, j) in edges) for j in 1:numberOfCities) - sum(x[j, i] * ((j, i) in edges) for j in 1:numberOfCities) == 0)
   @constraint(model, sum(x[startIndex, j] * ((startIndex, j) in edges) for j in 1:numberOfCities) -
                      sum(x[j, startIndex] * ((j, startIndex) in edges) for j in 1:numberOfCities) == 1)
   @constraint(model, sum(x[endIndex, j] * ((endIndex, j) in edges) for j in 1:numberOfCities) -
                      sum(x[j, endIndex] * ((j, endIndex) in edges) for j in 1:numberOfCities) == -1)
-
-  @constraint(model, sum(x[i, j] * timeMatrix[i, j] for i in 1:numberOfCities for j in 1:numberOfCities) <= timeTreshhold)
+  # @constraint(model, sum(x[i, j] * timeMatrix[i, j] for i in 1:numberOfCities for j in 1:numberOfCities) <= timeTreshhold)
   @objective(model, Min, sum(x[i, j] * costMatrix[i, j] for i in 1:numberOfCities for j in 1:numberOfCities))
 
   @info "Starting model"
@@ -61,29 +60,43 @@ function main()
       throw(error("Incorrect format"))
     end #if
     
+    comment = "{"
+
     temp = readline(file)
     while temp != "Times"
       tempArr= split(temp)
       tempArr = map(x -> parse(Int, x), tempArr)
       push!(edges, (tempArr[1], tempArr[2]))
       temp = readline(file)
+      comment *= "($(tempArr[1]),$(tempArr[2])),"
     end #while
-
+    comment *= "}"
+    #@show comment
     temp = readline(file)
+
+    comment = "{"
 
     while temp != "Costs"
       tempArr= split(temp)
       tempArr = map(x -> parse(Int, x), tempArr)
       times[tempArr[1], tempArr[2]] = tempArr[3]
       temp = readline(file)
+      comment *= "(($(tempArr[1]),$(tempArr[2])) \rightarrow $(tempArr[3])),"
     end #while
+
+    comment *= "}"
+    #@show comment
+    comment = "{"
 
     for l in readlines(file)
       tempArr= split(l)
       tempArr = map(x -> parse(Int, x), tempArr)
       costs[tempArr[1], tempArr[2]] = tempArr[3]
+      comment *= "(($(tempArr[1]),$(tempArr[2])) \rightarrow $(tempArr[3])),"
     end #for
-
+    comment *= "}"
+    #@show comment
+    
     zad = Zad2Model(numberOfCities, timeTreshold, startIndex, endIndex, edges, times, costs)
   end #open
 

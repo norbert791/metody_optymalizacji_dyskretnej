@@ -17,23 +17,24 @@ function solveModel(data::ModelData)
   numOfShifts = length(shiftMin)
   numOfDistr = length(distrMin) 
 
-  @show shiftMin
-  @show distrMin
+  # @show shiftMin
+  # @show distrMin
 
-  @variable(model,  x[i=1:numOfDistr, j=1:numOfShifts], Int)
-  @constraint(model, [i=1:numOfDistr, j=1:numOfShifts], x[i, j] <= maxCars[i, j])
-  @constraint(model, [i=1:numOfDistr, j=1:numOfShifts], x[i, j] >= minCars[i, j] )
-  @constraint(model, [j in 1:numOfShifts], sum(x[:, j]) == sum(x[:, mod1(j + 1, numOfShifts)]))
-  @constraint(model, [j in 1:numOfShifts], sum(x[:, j]) >= shiftMin[j])
-  @constraint(model, [i in 1:numOfDistr], sum(x[i, :]) >= distrMin[i])
-  @objective(model, Min, sum(x[:, 1]))
+  @variable(model, 0 <= d[i=1:numOfDistr, j=1:numOfShifts], Int)
+  @variable(model, 0 <= z[i=1:numOfShifts, j=1:numOfDistr], Int)
+  @constraint(model, [i=1:numOfDistr], sum(d[i, j] for j in 1:numOfShifts) == sum(z[j, i] for j in 1:numOfShifts))
+  @constraint(model, [i=1:numOfDistr], sum(d[i, :]) >= distrMin[i])
+  @constraint(model, [i=1:numOfDistr], sum(z[i, :]) >= shiftMin[i])
+  @constraint(model, [i=1:numOfDistr, j=1:numOfShifts], minCars[i, j] <= d[i, j] <= maxCars[i, j])
+  @objective(model, Min, sum(d[i, j] for i in 1:numOfDistr for j in 1:numOfShifts))
 
   @info "Starting model"
   print(model)
   @info "Optimization"
   optimize!(model)
   @info "Optimized model vars"
-#  println(value.(x))
+  println(value.(d))
+  println(value.(z))
 end
 
 function main()

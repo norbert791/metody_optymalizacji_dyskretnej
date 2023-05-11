@@ -1,7 +1,7 @@
 module MyGraphPrimitives
 
 export DirectedGraph, SimpleGraph, SparseDirectedGraph, SparseSimpleGraph, getVertices,
-       getNeighbours, getAdjacentVertices, addEdge!, Graph, loadGraph
+       getNeighbours, getAdjacentVertices, addEdge!, Graph, loadGraph, getWeight, DirectedNetwork
 
 abstract type Graph end
 
@@ -30,7 +30,7 @@ END INTERFACE
 =#
 
 mutable struct DirectedNetwork <: Graph
-  graph::DirectedGraph
+  graph::SparseDirectedGraph{Unsigned}
   costs::Dict{Tuple{Unsigned, Unsigned}, Unsigned}
 end
 
@@ -251,6 +251,16 @@ function addEdge!(graph::SparseSimpleGraph{T}, edge::Tuple{T, T})::SparseSimpleG
 
   return graph
 end #function
+
+function loadNetwork(filename::String)
+  network = DirectedNetwork()
+  
+  open(filename) do file
+    for line in file
+      
+    end #for
+  end
+end
 
 function loadGraph(fileName::String, sparse::Bool)
   open(fileName) do file

@@ -32,9 +32,14 @@ END INTERFACE
 mutable struct DirectedNetwork <: Graph
   graph::SparseDirectedGraph{Unsigned}
   costs::Dict{Tuple{Unsigned, Unsigned}, Unsigned}
+
+  DirectedNetwork(numOfVertices::Unsigned) = new(SparseDirectedGraph(numOfVertices), Dict())
 end
 
-addEdge!(network::DirectedNetwork) = addEdge!(network.graph)
+function addEdge!(network::DirectedNetwork, edge::Tuple{Unsigned, Unsigned}, weight::Unsigned)
+  addEdge!(network.graph, edge)
+  costs[edge] = weight
+end #addEdge!
 getVertices(network::DirectedNetwork) = getVertices(network.graph)
 getNeighbours(network::DirectedGraph) = getNeighbours(network.graph)
 getAdjacentVertices(network::DirectedGraph) = getAdjacentVertices(network.graph)
@@ -251,16 +256,6 @@ function addEdge!(graph::SparseSimpleGraph{T}, edge::Tuple{T, T})::SparseSimpleG
 
   return graph
 end #function
-
-function loadNetwork(filename::String)
-  network = DirectedNetwork()
-  
-  open(filename) do file
-    for line in file
-      
-    end #for
-  end
-end
 
 function loadGraph(fileName::String, sparse::Bool)
   open(fileName) do file

@@ -1,7 +1,7 @@
 module MyGraphPrimitives
 
 export DirectedGraph, SimpleGraph, SparseDirectedGraph, SparseSimpleGraph, getVertices,
-       getNeighbours, getAdjacentVertices, addEdge!, Graph, loadGraph, getWeight, DirectedNetwork
+       getNeighbours, getAdjacentVertices, addEdge!, Graph, loadGraph, getWeight, DirectedNetwork, MyGraphPrimitives
 
 abstract type Graph end
 
@@ -28,22 +28,6 @@ function getAdjacentVertices(graph::Graph, vertex::T)::Vector{T} where T <: Unsi
 function addEdge!(graph::Graph, vertice::Tuple{T, T})::Graph where T <: Unsigned end
 END INTERFACE
 =#
-
-mutable struct DirectedNetwork <: Graph
-  graph::SparseDirectedGraph{Unsigned}
-  costs::Dict{Tuple{Unsigned, Unsigned}, Unsigned}
-
-  DirectedNetwork(numOfVertices::Unsigned) = new(SparseDirectedGraph(numOfVertices), Dict())
-end
-
-function addEdge!(network::DirectedNetwork, edge::Tuple{Unsigned, Unsigned}, weight::Unsigned)
-  addEdge!(network.graph, edge)
-  costs[edge] = weight
-end #addEdge!
-getVertices(network::DirectedNetwork) = getVertices(network.graph)
-getNeighbours(network::DirectedGraph) = getNeighbours(network.graph)
-getAdjacentVertices(network::DirectedGraph) = getAdjacentVertices(network.graph)
-getWeight(network::DirectedGraph, from::Unsigned, to::Unsigned)::Unsigned = network.costs[(from,to)]
 
 mutable struct DirectedGraph{T <: Unsigned} <: Graph
   vertices::UnitRange{T}
@@ -256,6 +240,23 @@ function addEdge!(graph::SparseSimpleGraph{T}, edge::Tuple{T, T})::SparseSimpleG
 
   return graph
 end #function
+
+mutable struct DirectedNetwork <: Graph
+  graph::SparseDirectedGraph{Unsigned}
+  costs::Dict{Tuple{Unsigned, Unsigned}, Unsigned}
+
+  DirectedNetwork(numOfVertices::Unsigned) = new(SparseDirectedGraph{Unsigned}(numOfVertices), Dict())
+end
+
+function addEdge!(network::DirectedNetwork, edge::Tuple{Unsigned, Unsigned}, weight::Unsigned)
+  addEdge!(network.graph, edge)
+  network.costs[edge] = weight
+end #addEdge!
+
+getVertices(network::DirectedNetwork) = getVertices(network.graph)
+getNeighbours(network::DirectedNetwork, vertex::Unsigned) = getNeighbours(network.graph, vertex)
+getAdjacentVertices(network::DirectedNetwork) = getAdjacentVertices(network.graph)
+getWeight(network::DirectedNetwork, from::Unsigned, to::Unsigned)::Unsigned = network.costs[(from,to)]
 
 function loadGraph(fileName::String, sparse::Bool)
   open(fileName) do file

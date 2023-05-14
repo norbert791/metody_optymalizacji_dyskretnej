@@ -39,8 +39,10 @@ function dijkstraAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Uns
 end #dijkstraAlgorithm
 
 function dialAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
-  wages = map(p -> p[2], graph.costs)
-  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.BucketPriorityQueue{Unsigned}(findmax(wages)[1]), target)
+  wages = [i for i in values(graph.costs)]
+  m = findmax(wages)[1]
+  upperBound = m * length(MyGraphPrimitives.getVertices(graph))
+  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.BucketPriorityQueue{Unsigned}(upperBound), target)
 end #dialAlgorithm
 
 function radixHeapAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}

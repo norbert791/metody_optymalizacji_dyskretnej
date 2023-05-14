@@ -37,9 +37,27 @@ mutable struct BucketPriorityQueue{T}
   end #BucketPriorityQueue
 end
 
+@inline function findfirst(queue::DataStructures.MutableLinkedList{T}, elem::T) where T <: Any
+  index = 1
+  for v in queue
+    if v == elem
+      return index
+    else
+      index += 1
+    end #if
+  end
+
+  return nothing
+end
+
 function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) where T <: Any
-  push!(queue.buckets[priority + 1], elem)
-  queue.numOfElems += 1
+  index = findfirst(queue.buckets[priority + 1], elem)
+  if isnothing(index)
+    push!(queue.buckets[priority + 1], elem)
+    queue.numOfElems += 1
+  else
+    queue.buckets[priority + 1][index] = elem
+  end #if
 end #enqueue!
 
 function dequeue!(queue::BucketPriorityQueue{T})::T where T <: Any
@@ -61,20 +79,26 @@ mutable struct RadixHeap{T, E}
   buckets::Vector{Vector{Tuple{T, E}}}
   lastDeletion::E
   numOfElems::Unsigned
-  oldestBitSelector::T
+  oldestBitSelector::E
 
   function RadixHeap{T, E}() where {T <: Any, E <: Unsigned}
-    selector::T = typemax(T)
+    selector::E = typemax(E)
     selector = selector - (selector >> 1)
-    return new(map(_ -> Vector{T}(), 1:(sizeof(T) * 8 + 1)), E(0), Unsigned(0), selector)
+    #TODO: replace 65 with size of underlying type of E
+    return new(map(_ -> Vector(), 1:(65)), E(0), Unsigned(0), selector)
   end #RadixHeap
 
 end
 
 function enqueue!(queue::RadixHeap{T, E}, elem::T, priority::E) where {T <: Any, E <: Unsigned}
   bucketIndex = findOldestBit(queue, priority ⊻ queue.lastDeletion) + 1
-  queue.numOfElems += 1
-  push!(queue.buckets[bucketIndex], (elem, priority))
+  index = Base.findfirst(x -> x[1] == elem, queue.buckets[bucketIndex])
+  if isnothing(index)
+    push!(queue.buckets[bucketIndex], (elem, priority))
+    queue.numOfElems += 1
+  else
+    queue.buckets[bucketIndex][index] = (elem, priority)
+  end #if
 end #enqueue!
 
 function dequeue!(queue::RadixHeap{T, E})::T where {T <: Any, E <: Unsigned}
@@ -94,15 +118,32 @@ function dequeue!(queue::RadixHeap{T, E})::T where {T <: Any, E <: Unsigned}
   bucket = queue.buckets[foundIndex]
   minElem = popat!(bucket, argmin(x -> bucket[x][2], 1:length(bucket)))
   queue.lastDeletion = minElem[2]
-
-  if Base.isempty(bucket)
-    queue.buckets = [queue.buckets[foundIndex:length(queue.buckets)]; queue.buckets[1:(foundIndex - 1)]]
-  end #if
+  redistibuteBuckets!(queue, foundIndex)
+    
 
   queue.numOfElems -= 1
 
   return minElem[1]
 end #dequeue!
+
+@inline function redistibuteBuckets!(queue::RadixHeap{T, E}, foundIndex) where {T <: Any, E <: Unsigned}
+  while foundIndex <= length(queue.buckets)
+    foundIndex += 1
+  end #while
+
+  if foundIndex > length(queue.buckets)
+    return
+  end #if
+
+  redistributed = queue.buckets[foundIndex]
+  queue.buckets[foundIndex] = Vector()
+  minElem, _ = findmin(x -> redistributed[x][2], 1:length(redistributed))
+  
+  for v in redistributed
+    bucketIndex = findOldestBit(queue, v[2] ⊻ queue.lastDeletion) + 1
+    push!(queue.buckets[bucketIndex], minElem)
+  end #for
+end #redistibuteBuckets!
 
 function isempty(queue::RadixHeap)::Bool
   return queue.numOfElems == 0
@@ -110,7 +151,8 @@ end #isempty
 
 @inline function findOldestBit(heap::RadixHeap{T, E}, num::E) where {T <: Any, E <: Unsigned}
   sel::E = heap.oldestBitSelector
-  result = sizeof(T) * 8
+  #todo: replace 65 with sizeof underlying type of E
+  result = 65
 
   while (sel & num != sel) && sel > 0
     result  -= 1

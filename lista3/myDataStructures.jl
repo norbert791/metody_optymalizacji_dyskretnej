@@ -3,6 +3,29 @@ module MyDataStructures
 import DataStructures
 export BucketPriorityQueue, RadixHeap, enqueue!, dequeue!, isempty
 
+mutable struct PriorityQueueProxy{K, V}
+  queue::DataStructures.PriorityQueue{K, V}
+
+  function PriorityQueueProxy{K, V}() where {K <: Any, V <: Unsigned}
+    return new{K, V}(DataStructures.PriorityQueue{K, V}())
+  end #PriorityQueueAdapter
+end
+
+function enqueue!(queue::PriorityQueueProxy{K, V}, elem::K, prio::V) where {K <: Any, V <: Unsigned}
+  if elem in keys(queue.queue)
+    DataStructures.delete!(queue.queue, elem)
+  end #if
+  DataStructures.enqueue!(queue.queue, elem, prio)
+end #enqueue!
+
+function dequeue!(queue::PriorityQueueProxy{K, V})::K where {K <: Any, V <: Unsigned}
+  DataStructures.dequeue!(queue.queue)
+end #enqueue!
+
+function isempty(queue::PriorityQueueProxy{K, V})::Bool where {K <: Any, V <: Unsigned}
+  return DataStructures.isempty(queue.queue)
+end
+
 #Can be optimized to store lowest nonempty bucket
 mutable struct BucketPriorityQueue{T}
   buckets::Vector{DataStructures.MutableLinkedList{T}}

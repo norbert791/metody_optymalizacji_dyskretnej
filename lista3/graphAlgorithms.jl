@@ -2,10 +2,10 @@ module MyGraphAlgorithms
 
 include("graphPrimitives.jl")
 include("myDataStructures.jl")
-using DataStructures
+using .MyDataStructures
 
 import .MyGraphPrimitives, ArgParse
-export dijkstraAlgorithm, dialAlgorithm
+export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runForAlgorithm
 
 @inline function dijkstraAlgorithmTemplate(graph::MyGraphPrimitives.DirectedNetwork,
                                   source::Unsigned, queueInstance,
@@ -15,17 +15,17 @@ export dijkstraAlgorithm, dialAlgorithm
   enqueue!(queueInstance, source, Unsigned(0))
   distances[source] = Unsigned(0)
 
-  while !isempty(queueInstance)
-    closestVertex::Unsigned = dequeue!(queueInstance)
+  while !MyDataStructures.isempty(queueInstance)
+    closestVertex::Unsigned = MyDataStructures.dequeue!(queueInstance)
     if !isnothing(target) && target == closestVertex
       return distances[target]
     end #if
     
     for v in MyGraphPrimitives.getNeighbours(graph, closestVertex)
       newDist::Unsigned = MyGraphPrimitives.getWeight(graph, closestVertex, v) + distances[closestVertex]
-      if newDist < distances[closestVertex]
-        distances[closestVertex] = newDist
-        enqueue!(queueInstance, v, newDist)
+      if newDist < distances[v]
+        distances[v] = newDist
+        MyDataStructures.enqueue!(queueInstance, v, newDist)
       end #if
     end #for
   end #while
@@ -35,7 +35,7 @@ export dijkstraAlgorithm, dialAlgorithm
 end #dijkstraAlgorithmTemplate
 
 function dijkstraAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
-  return dijkstraAlgorithmTemplate(graph, source, DataStructures.PriorityQueue{Unsigned, Unsigned}(), target)
+  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.PriorityQueueProxy{Unsigned, Unsigned}(), target)
 end #dijkstraAlgorithm
 
 function dialAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}

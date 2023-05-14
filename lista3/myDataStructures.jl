@@ -28,11 +28,11 @@ end
 
 #Can be optimized to store lowest nonempty bucket
 mutable struct BucketPriorityQueue{T}
-  buckets::Vector{DataStructures.MutableLinkedList{T}}
+  buckets::Dict{Unsigned, DataStructures.MutableLinkedList{T}}
   numOfElems::Unsigned
 
-  function BucketPriorityQueue{T}(upperBound::Unsigned) where T <: Any
-    buckets = map(_ -> DataStructures.MutableLinkedList{T}(), 1:(upperBound + 1)) #Buckets are labeld from 1 to upperBound + 1
+  function BucketPriorityQueue{T}() where T <: Any
+    buckets = Dict()
     return new{T}(buckets, Unsigned(0))
   end #BucketPriorityQueue
 end
@@ -51,6 +51,9 @@ end
 end
 
 function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) where T <: Any
+  if !haskey(queue.buckets, priority + 1)
+    queue.buckets[priority + 1] = DataStructures.MutableLinkedList{Unsigned}()
+  end #if
   index = findfirst(queue.buckets[priority + 1], elem)
   if isnothing(index)
     push!(queue.buckets[priority + 1], elem)
@@ -61,14 +64,19 @@ function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) wh
 end #enqueue!
 
 function dequeue!(queue::BucketPriorityQueue{T})::T where T <: Any
-  for elem in queue.buckets
-    if !DataStructures.isempty(elem)
-      queue.numOfElems -= 1
-      return popfirst!(elem)
-    end #if
-  end #for
+  if queue.numOfElems == 0
+    throw(BoundsError("The queue is empty"))
+  end #if
 
-  throw(BoundsError("The queue is empty"))
+  priority = min(keys(queue.buckets)...)
+  result = popfirst!(queue.buckets[priority])
+  queue.numOfElems -= 1
+
+  if DataStructures.isempty(queue.buckets[priority])
+    delete!(queue.buckets, priority)
+  end #if
+
+  return result
 end #dequeue!
 
 function isempty(queue::BucketPriorityQueue{T})::Bool where T <: Any

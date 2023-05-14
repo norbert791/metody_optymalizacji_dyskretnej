@@ -63,12 +63,24 @@ function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) wh
   end #if
 end #enqueue!
 
+#ordinary min seems to have performance issue
+@inline function myMin(dict::Dict{Unsigned, DataStructures.MutableLinkedList{T}})::Unsigned where T <: Any
+  minKey::Unsigned = first(dict)[1]
+  for (key, _) in dict
+    if key < minKey
+      minKey = key
+    end #if
+  end #for
+
+  return minKey
+end
+
 function dequeue!(queue::BucketPriorityQueue{T})::T where T <: Any
   if queue.numOfElems == 0
     throw(BoundsError("The queue is empty"))
   end #if
 
-  priority = min(keys(queue.buckets)...)
+  priority = myMin(queue.buckets)
   result = popfirst!(queue.buckets[priority])
   queue.numOfElems -= 1
 

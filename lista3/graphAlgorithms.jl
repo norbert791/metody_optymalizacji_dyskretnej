@@ -25,6 +25,7 @@ export dijkstraAlgorithm, dialAlgorithm
       newDist::Unsigned = MyGraphPrimitives.getWeight(graph, closestVertex, v) + distances[closestVertex]
       if newDist < distances[closestVertex]
         distances[closestVertex] = newDist
+        enqueue!(queueInstance, v, newDist)
       end #if
     end #for
   end #while
@@ -43,7 +44,7 @@ function dialAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigne
 end #dialAlgorithm
 
 function radixHeapAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
-  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.RadixHeap{Unsigned, UInt64}, target)
+  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.RadixHeap{Unsigned, UInt64}(), target)
 end #radixHeapAlgorithm
 
 function loadNetwork(filename::String)::DirectedNetwork
@@ -233,6 +234,7 @@ function runForAlgorithm(algorithm::Function, algorithmName::String)
     result = []
 
     for p in pairs
+      println("Running for $p")
       r = algorithm(network, p[1], p[2])
       push!(result, (p[1], p[2], r))
     end #for

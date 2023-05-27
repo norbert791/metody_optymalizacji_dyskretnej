@@ -3,9 +3,9 @@ using .MyDataStructures
 using Test
 
 @testset "BucketPriorityQueue" begin
-  queue = BucketPriorityQueue{Int}(Unsigned(50))
+  queue = BucketPriorityQueue{Int}()
 
-  enqueue!(queue, 5,  Unsigned(50))
+  enqueue!(queue, 5, Unsigned(50))
   enqueue!(queue, 10, Unsigned(49))
   enqueue!(queue, 20, Unsigned(0))
 
@@ -17,9 +17,9 @@ using Test
 end #BucketPriorityQueue
 
 @testset "RadixHeap" begin
-  queue = RadixHeap{Int, Unsigned}()
+  queue = RadixHeap{Int,UInt64}()
 
-  enqueue!(queue, 5,  Unsigned(50))
+  enqueue!(queue, 5, Unsigned(50))
   enqueue!(queue, 10, Unsigned(49))
   enqueue!(queue, 20, Unsigned(0))
 

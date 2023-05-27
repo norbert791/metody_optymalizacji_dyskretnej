@@ -1,0 +1,2784 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+    <link rel='stylesheet' type='text/css' href='statprofiler.css'></link>
+    <title>StatProfilerHTML - graphAlgorithms.jl</title>
+  </head>
+  <body>
+    <div class='report-header'>
+      <div class='backlink'>
+        <a href='index.html'>Report index</a>
+      </div>
+      <div class='report-title'>
+        StatProfilerHTML.jl report
+      </div>
+      <div class='generated-on'>
+        Generated on Sat, 27 May 2023 23:02:45
+      </div>
+    </div>
+    <table>
+      <caption>File source code</caption>
+      <thead>
+        <tr>
+          <th>Line</th>
+          <th>Exclusive</th>
+          <th>Inclusive</th>
+          <th>Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id='L1'>
+          <td class='lineno'>1</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>module MyGraphAlgorithms</span>
+          </td>
+        </tr>
+        <tr id='L2'>
+          <td class='lineno'>2</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L3'>
+          <td class='lineno'>3</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>include&#40;&quot;graphPrimitives.jl&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L4'>
+          <td class='lineno'>4</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>include&#40;&quot;myDataStructures.jl&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L5'>
+          <td class='lineno'>5</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>using .MyDataStructures</span>
+          </td>
+        </tr>
+        <tr id='L6'>
+          <td class='lineno'>6</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L7'>
+          <td class='lineno'>7</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>import .MyGraphPrimitives, ArgParse</span>
+          </td>
+        </tr>
+        <tr id='L8'>
+          <td class='lineno'>8</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runForAlgorithm</span>
+          </td>
+        </tr>
+        <tr id='L9'>
+          <td class='lineno'>9</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L10'>
+          <td class='lineno'>10</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>@inline function dijkstraAlgorithmTemplate&#40;graph::MyGraphPrimitives.DirectedNetwork,</span>
+          </td>
+        </tr>
+        <tr id='L11'>
+          <td class='lineno'>11</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  source::Unsigned, queueInstance,</span>
+          </td>
+        </tr>
+        <tr id='L12'>
+          <td class='lineno'>12</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  target::Union&#123;Nothing,Unsigned&#125;&#61;nothing&#41;::Union&#123;Unsigned,Vector&#123;Unsigned&#125;&#125;</span>
+          </td>
+        </tr>
+        <tr id='L13'>
+          <td class='lineno'>13</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L14'>
+          <td class='lineno'>14</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'>15 &#40;0 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              15 &#40;0 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              
+              15 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              1 &#40;7 &#37;&#41;
+              samples spent calling
+              <a href='array.jl-375e6cb537b5fc852acf1baf398fddea79b28a24.html#L613'>convert</a>
+              <br />
+              14 &#40;93 &#37;&#41;
+              samples spent calling
+              <a href='abstractarray.jl-1a8a8ce51c7ba940e73f0cb703ec9901b8715d2a.html#L3261'>map</a>
+              <br />
+            </div>
+            <span class='code'>  distances::Vector&#123;Unsigned&#125; &#61; map&#40;_ -&gt; typemax&#40;UInt64&#41;, MyGraphPrimitives.getVertices&#40;graph&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L15'>
+          <td class='lineno'>15</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'>1 &#40;0 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              1 &#40;0 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              
+              1 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              1 &#40;100 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L109'>enqueue&#33;</a>
+              <br />
+            </div>
+            <span class='code'>  enqueue&#33;&#40;queueInstance, source, Unsigned&#40;0&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L16'>
+          <td class='lineno'>16</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  distances&#91;source&#93; &#61; Unsigned&#40;0&#41;</span>
+          </td>
+        </tr>
+        <tr id='L17'>
+          <td class='lineno'>17</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L18'>
+          <td class='lineno'>18</td>
+          <td class='tracecount excl'>15 &#40;0 &#37;&#41;</td>
+          <td class='tracecount incl'>775 &#40;2 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              775 &#40;2 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              15 &#40;2 &#37;&#41; &#40;ex.&#41;,
+              775 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              758 &#40;100 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L182'>isempty</a>
+              <br />
+              2 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='bool.jl-49dbc1e22ba103874481d36b4d2982a4e016c35b.html#L35'>&#33;</a>
+              <br />
+            </div>
+            <span class='code'>  while &#33;MyDataStructures.isempty&#40;queueInstance&#41;</span>
+          </td>
+        </tr>
+        <tr id='L19'>
+          <td class='lineno'>19</td>
+          <td class='tracecount excl'>491 &#40;1 &#37;&#41;</td>
+          <td class='tracecount incl'>36495 &#40;82 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              36495 &#40;82 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              491 &#40;1 &#37;&#41; &#40;ex.&#41;,
+              36495 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              36004 &#40;100 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L139'>dequeue&#33;</a>
+              <br />
+            </div>
+            <span class='code'>    closestVertex::Unsigned &#61; MyDataStructures.dequeue&#33;&#40;queueInstance&#41;</span>
+          </td>
+        </tr>
+        <tr id='L20'>
+          <td class='lineno'>20</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    if &#33;isnothing&#40;target&#41; &amp;&amp; target &#61;&#61; closestVertex</span>
+          </td>
+        </tr>
+        <tr id='L21'>
+          <td class='lineno'>21</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      return distances&#91;target&#93;</span>
+          </td>
+        </tr>
+        <tr id='L22'>
+          <td class='lineno'>22</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #if</span>
+          </td>
+        </tr>
+        <tr id='L23'>
+          <td class='lineno'>23</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L24'>
+          <td class='lineno'>24</td>
+          <td class='tracecount excl'>81 &#40;0 &#37;&#41;</td>
+          <td class='tracecount incl'>680 &#40;2 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              680 &#40;2 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              81 &#40;12 &#37;&#41; &#40;ex.&#41;,
+              680 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              72 &#40;12 &#37;&#41;
+              samples spent calling
+              <a href='graphPrimitives.jl-769f5c64067e525db22739b14f16ac3a4823c816.html#L256'>getNeighbours</a>
+              <br />
+              527 &#40;88 &#37;&#41;
+              samples spent calling
+              <a href='array.jl-375e6cb537b5fc852acf1baf398fddea79b28a24.html#L893'>iterate</a>
+              <br />
+            </div>
+            <span class='code'>    for v in MyGraphPrimitives.getNeighbours&#40;graph, closestVertex&#41;</span>
+          </td>
+        </tr>
+        <tr id='L25'>
+          <td class='lineno'>25</td>
+          <td class='tracecount excl'>2344 &#40;5 &#37;&#41;</td>
+          <td class='tracecount incl'>4325 &#40;10 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              4325 &#40;10 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              2344 &#40;54 &#37;&#41; &#40;ex.&#41;,
+              4325 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              190 &#40;10 &#37;&#41;
+              samples spent calling
+              <a href='abstractarray.jl-1a8a8ce51c7ba940e73f0cb703ec9901b8715d2a.html#L1297'>getindex</a>
+              <br />
+              7 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='number.jl-7980c09650cb72c292d05bed423f779f5a207029.html#L5'>convert</a>
+              <br />
+              3 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='dict.jl-9a8820cbfb5bb9af7165991e830c8d953b2ddf0c.html#L260'>ht_keyindex</a>
+              <br />
+              1774 &#40;90 &#37;&#41;
+              samples spent calling
+              <a href='graphPrimitives.jl-769f5c64067e525db22739b14f16ac3a4823c816.html#L258'>getWeight</a>
+              <br />
+              7 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='int.jl-96677431a30f9e3c48273fb83349b8ce07570e3d.html#L86'>&#43;</a>
+              <br />
+            </div>
+            <span class='code'>      newDist::Unsigned &#61; MyGraphPrimitives.getWeight&#40;graph, closestVertex, v&#41; &#43; distances&#91;closestVertex&#93;</span>
+          </td>
+        </tr>
+        <tr id='L26'>
+          <td class='lineno'>26</td>
+          <td class='tracecount excl'>465 &#40;1 &#37;&#41;</td>
+          <td class='tracecount incl'>682 &#40;2 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              682 &#40;2 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              465 &#40;68 &#37;&#41; &#40;ex.&#41;,
+              682 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              207 &#40;95 &#37;&#41;
+              samples spent calling
+              <a href='abstractarray.jl-1a8a8ce51c7ba940e73f0cb703ec9901b8715d2a.html#L1297'>getindex</a>
+              <br />
+              10 &#40;5 &#37;&#41;
+              samples spent calling
+              <a href='int.jl-96677431a30f9e3c48273fb83349b8ce07570e3d.html#L486'>&lt;</a>
+              <br />
+            </div>
+            <span class='code'>      if newDist &lt; distances&#91;v&#93;</span>
+          </td>
+        </tr>
+        <tr id='L27'>
+          <td class='lineno'>27</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'>188 &#40;0 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              188 &#40;0 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              
+              188 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              188 &#40;100 &#37;&#41;
+              samples spent calling
+              <a href='multidimensional.jl-abc866b4e0f9eadadab414ee35bfda64e6b5dba1.html#L670'>setindex&#33;</a>
+              <br />
+            </div>
+            <span class='code'>        distances&#91;v&#93; &#61; newDist</span>
+          </td>
+        </tr>
+        <tr id='L28'>
+          <td class='lineno'>28</td>
+          <td class='tracecount excl'>99 &#40;0 &#37;&#41;</td>
+          <td class='tracecount incl'>995 &#40;2 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              995 &#40;2 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              99 &#40;10 &#37;&#41; &#40;ex.&#41;,
+              995 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              895 &#40;100 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L109'>enqueue&#33;</a>
+              <br />
+              1 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='essentials.jl-3f7f4ecb94aa329c6772150c12ad48498837f8d2.html#L109'>enqueue&#33;</a>
+              <br />
+            </div>
+            <span class='code'>        MyDataStructures.enqueue&#33;&#40;queueInstance, v, newDist&#41;</span>
+          </td>
+        </tr>
+        <tr id='L29'>
+          <td class='lineno'>29</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L30'>
+          <td class='lineno'>30</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'>28 &#40;0 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              28 &#40;0 &#37;&#41;
+              samples spent in dijkstraAlgorithmTemplate
+              <br />
+              
+              28 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            <div class='callees'>
+              12 &#40;43 &#37;&#41;
+              samples spent calling
+              <a href='array.jl-375e6cb537b5fc852acf1baf398fddea79b28a24.html#L0'>iterate</a>
+              <br />
+              16 &#40;57 &#37;&#41;
+              samples spent calling
+              <a href='array.jl-375e6cb537b5fc852acf1baf398fddea79b28a24.html#L893'>iterate</a>
+              <br />
+            </div>
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L31'>
+          <td class='lineno'>31</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #while</span>
+          </td>
+        </tr>
+        <tr id='L32'>
+          <td class='lineno'>32</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L33'>
+          <td class='lineno'>33</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return distances</span>
+          </td>
+        </tr>
+        <tr id='L34'>
+          <td class='lineno'>34</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L35'>
+          <td class='lineno'>35</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #dijkstraAlgorithmTemplate</span>
+          </td>
+        </tr>
+        <tr id='L36'>
+          <td class='lineno'>36</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L37'>
+          <td class='lineno'>37</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function dijkstraAlgorithm&#40;graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union&#123;Nothing,Unsigned&#125;&#61;nothing&#41;::Union&#123;Unsigned,Vector&#123;Unsigned&#125;&#125;</span>
+          </td>
+        </tr>
+        <tr id='L38'>
+          <td class='lineno'>38</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return dijkstraAlgorithmTemplate&#40;graph, source, MyDataStructures.PriorityQueueProxy&#123;Unsigned,Unsigned&#125;&#40;&#41;, target&#41;</span>
+          </td>
+        </tr>
+        <tr id='L39'>
+          <td class='lineno'>39</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #dijkstraAlgorithm</span>
+          </td>
+        </tr>
+        <tr id='L40'>
+          <td class='lineno'>40</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L41'>
+          <td class='lineno'>41</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function dialAlgorithm&#40;graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union&#123;Nothing,Unsigned&#125;&#61;nothing&#41;::Union&#123;Unsigned,Vector&#123;Unsigned&#125;&#125;</span>
+          </td>
+        </tr>
+        <tr id='L42'>
+          <td class='lineno'>42</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return dijkstraAlgorithmTemplate&#40;graph, source, MyDataStructures.BucketPriorityQueue&#123;Unsigned&#125;&#40;&#41;, target&#41;</span>
+          </td>
+        </tr>
+        <tr id='L43'>
+          <td class='lineno'>43</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #dialAlgorithm</span>
+          </td>
+        </tr>
+        <tr id='L44'>
+          <td class='lineno'>44</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            <div class='call-sites'>
+              44227 &#40;100 &#37;&#41;
+              samples spent in radixHeapAlgorithm
+              <br />
+              
+              44227 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from radixHeapAlgorithm
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L46'>line 46</a>
+              <br />
+            </div>
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L45'>
+          <td class='lineno'>45</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function radixHeapAlgorithm&#40;graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union&#123;Nothing,Unsigned&#125;&#61;nothing&#41;::Union&#123;Unsigned,Vector&#123;Unsigned&#125;&#125;</span>
+          </td>
+        </tr>
+        <tr id='L46'>
+          <td class='lineno'>46</td>
+          <td class='tracecount excl'>63 &#40;0 &#37;&#41;</td>
+          <td class='tracecount incl'>88527 &#40;200 &#37;&#41;</td>
+          <td>
+            <div class='call-sites'>
+              44300 &#40;100 &#37;&#41;
+              samples spent in radixHeapAlgorithm
+              <br />
+              63 &#40;0 &#37;&#41; &#40;ex.&#41;,
+              44300 &#40;100 &#37;&#41; &#40;incl.&#41;
+              when called from macro expansion
+              <a href='Profile.jl-430669a493bb5237feab39b1f95450e9a50cd47d.html#L27'>line 27</a>
+              <br />
+            </div>
+            <div class='callees'>
+              3 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L139'>dequeue&#33;</a>
+              <br />
+              680 &#40;1 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L24'>dijkstraAlgorithmTemplate</a>
+              <br />
+              995 &#40;1 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L28'>dijkstraAlgorithmTemplate</a>
+              <br />
+              27 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L0'>dijkstraAlgorithmTemplate</a>
+              <br />
+              28 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L30'>dijkstraAlgorithmTemplate</a>
+              <br />
+              15 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L14'>dijkstraAlgorithmTemplate</a>
+              <br />
+              36495 &#40;41 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L19'>dijkstraAlgorithmTemplate</a>
+              <br />
+              775 &#40;1 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L18'>dijkstraAlgorithmTemplate</a>
+              <br />
+              188 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L27'>dijkstraAlgorithmTemplate</a>
+              <br />
+              44227 &#40;50 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L44'>radixHeapAlgorithm</a>
+              <br />
+              4325 &#40;5 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L25'>dijkstraAlgorithmTemplate</a>
+              <br />
+              1 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L15'>dijkstraAlgorithmTemplate</a>
+              <br />
+              682 &#40;1 &#37;&#41;
+              samples spent calling
+              <a href='graphAlgorithms.jl-56e04f21c81e262d03dfb483f698f07fbcf168dc.html#L26'>dijkstraAlgorithmTemplate</a>
+              <br />
+              16 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='essentials.jl-3f7f4ecb94aa329c6772150c12ad48498837f8d2.html#L0'>dijkstraAlgorithmTemplate</a>
+              <br />
+              7 &#40;0 &#37;&#41;
+              samples spent calling
+              <a href='myDataStructures.jl-035cb59921e32eb4cef9758982170d29a1a868cd.html#L182'>isempty</a>
+              <br />
+            </div>
+            <span class='code'>  return dijkstraAlgorithmTemplate&#40;graph, source, MyDataStructures.RadixHeap&#123;Unsigned,UInt64&#125;&#40;&#41;, target&#41;</span>
+          </td>
+        </tr>
+        <tr id='L47'>
+          <td class='lineno'>47</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #radixHeapAlgorithm</span>
+          </td>
+        </tr>
+        <tr id='L48'>
+          <td class='lineno'>48</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L49'>
+          <td class='lineno'>49</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function loadNetwork&#40;filename::String&#41;::DirectedNetwork</span>
+          </td>
+        </tr>
+        <tr id='L50'>
+          <td class='lineno'>50</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  result::DirectedNetwork &#61; DirectedNetwork&#40;1&#41;</span>
+          </td>
+        </tr>
+        <tr id='L51'>
+          <td class='lineno'>51</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  nameRegex &#61; r&quot;p .* &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L52'>
+          <td class='lineno'>52</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  arcRegex &#61; r&quot;a &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L53'>
+          <td class='lineno'>53</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L54'>
+          <td class='lineno'>54</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;filename&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L55'>
+          <td class='lineno'>55</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for line in file</span>
+          </td>
+        </tr>
+        <tr id='L56'>
+          <td class='lineno'>56</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if line&#91;1&#93; &#61;&#61; &#39;c&#39;</span>
+          </td>
+        </tr>
+        <tr id='L57'>
+          <td class='lineno'>57</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L58'>
+          <td class='lineno'>58</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L59'>
+          <td class='lineno'>59</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;nameRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L60'>
+          <td class='lineno'>60</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L61'>
+          <td class='lineno'>61</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        networkSize &#61; parse&#40;Unsigned, temp.captures&#91;1&#93;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L62'>
+          <td class='lineno'>62</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        result &#61; DirectedNetwork&#40;networkSize&#41;</span>
+          </td>
+        </tr>
+        <tr id='L63'>
+          <td class='lineno'>63</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L64'>
+          <td class='lineno'>64</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L65'>
+          <td class='lineno'>65</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;arcRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L66'>
+          <td class='lineno'>66</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L67'>
+          <td class='lineno'>67</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        p&#40;u&#41; &#61; parse&#40;Unsigned, u&#41;</span>
+          </td>
+        </tr>
+        <tr id='L68'>
+          <td class='lineno'>68</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        addEdge&#33;&#40;result, &#40;p&#40;temp.captures&#91;1&#93;&#41;, p&#40;temp.captures&#91;2&#93;&#41;&#41;, p&#40;temp.captures&#91;3&#93;&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L69'>
+          <td class='lineno'>69</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L70'>
+          <td class='lineno'>70</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L71'>
+          <td class='lineno'>71</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end</span>
+          </td>
+        </tr>
+        <tr id='L72'>
+          <td class='lineno'>72</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L73'>
+          <td class='lineno'>73</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return result</span>
+          </td>
+        </tr>
+        <tr id='L74'>
+          <td class='lineno'>74</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end</span>
+          </td>
+        </tr>
+        <tr id='L75'>
+          <td class='lineno'>75</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L76'>
+          <td class='lineno'>76</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>#</span>
+          </td>
+        </tr>
+        <tr id='L77'>
+          <td class='lineno'>77</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'># UTILITI FUNCTIONS</span>
+          </td>
+        </tr>
+        <tr id='L78'>
+          <td class='lineno'>78</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>#</span>
+          </td>
+        </tr>
+        <tr id='L79'>
+          <td class='lineno'>79</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L80'>
+          <td class='lineno'>80</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function loadNetwork&#40;filename::String&#41;::MyGraphPrimitives.DirectedNetwork</span>
+          </td>
+        </tr>
+        <tr id='L81'>
+          <td class='lineno'>81</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  result::MyGraphPrimitives.DirectedNetwork &#61; MyGraphPrimitives.DirectedNetwork&#40;Unsigned&#40;1&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L82'>
+          <td class='lineno'>82</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  nameRegex &#61; r&quot;p .* &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L83'>
+          <td class='lineno'>83</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  arcRegex &#61; r&quot;a &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L84'>
+          <td class='lineno'>84</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L85'>
+          <td class='lineno'>85</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;filename&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L86'>
+          <td class='lineno'>86</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for line in readlines&#40;file&#41;</span>
+          </td>
+        </tr>
+        <tr id='L87'>
+          <td class='lineno'>87</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if line&#91;1&#93; &#61;&#61; &#39;c&#39;</span>
+          </td>
+        </tr>
+        <tr id='L88'>
+          <td class='lineno'>88</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L89'>
+          <td class='lineno'>89</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L90'>
+          <td class='lineno'>90</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;nameRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L91'>
+          <td class='lineno'>91</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L92'>
+          <td class='lineno'>92</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        networkSize &#61; Unsigned&#40;parse&#40;UInt64, temp.captures&#91;1&#93;&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L93'>
+          <td class='lineno'>93</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        result &#61; MyGraphPrimitives.DirectedNetwork&#40;networkSize&#41;</span>
+          </td>
+        </tr>
+        <tr id='L94'>
+          <td class='lineno'>94</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L95'>
+          <td class='lineno'>95</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L96'>
+          <td class='lineno'>96</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;arcRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L97'>
+          <td class='lineno'>97</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L98'>
+          <td class='lineno'>98</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        p&#40;u&#41; &#61; Unsigned&#40;parse&#40;UInt64, u&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L99'>
+          <td class='lineno'>99</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        MyGraphPrimitives.addEdge&#33;&#40;result, &#40;p&#40;temp.captures&#91;1&#93;&#41;, p&#40;temp.captures&#91;2&#93;&#41;&#41;, p&#40;temp.captures&#91;3&#93;&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L100'>
+          <td class='lineno'>100</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L101'>
+          <td class='lineno'>101</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L102'>
+          <td class='lineno'>102</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end</span>
+          </td>
+        </tr>
+        <tr id='L103'>
+          <td class='lineno'>103</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L104'>
+          <td class='lineno'>104</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return result</span>
+          </td>
+        </tr>
+        <tr id='L105'>
+          <td class='lineno'>105</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end</span>
+          </td>
+        </tr>
+        <tr id='L106'>
+          <td class='lineno'>106</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L107'>
+          <td class='lineno'>107</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function loadSources&#40;filename::String&#41;::Vector&#123;Unsigned&#125;</span>
+          </td>
+        </tr>
+        <tr id='L108'>
+          <td class='lineno'>108</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  sourceRegex &#61; r&quot;s &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L109'>
+          <td class='lineno'>109</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  result &#61; Vector&#123;Unsigned&#125;&#40;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L110'>
+          <td class='lineno'>110</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L111'>
+          <td class='lineno'>111</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;filename&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L112'>
+          <td class='lineno'>112</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for line in readlines&#40;file&#41;</span>
+          </td>
+        </tr>
+        <tr id='L113'>
+          <td class='lineno'>113</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if line&#91;1&#93; &#33;&#61; &#39;s&#39;</span>
+          </td>
+        </tr>
+        <tr id='L114'>
+          <td class='lineno'>114</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L115'>
+          <td class='lineno'>115</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L116'>
+          <td class='lineno'>116</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;sourceRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L117'>
+          <td class='lineno'>117</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L118'>
+          <td class='lineno'>118</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        push&#33;&#40;result, parse&#40;UInt64, temp.captures&#91;1&#93;&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L119'>
+          <td class='lineno'>119</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L120'>
+          <td class='lineno'>120</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L121'>
+          <td class='lineno'>121</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #open</span>
+          </td>
+        </tr>
+        <tr id='L122'>
+          <td class='lineno'>122</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L123'>
+          <td class='lineno'>123</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return result</span>
+          </td>
+        </tr>
+        <tr id='L124'>
+          <td class='lineno'>124</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end</span>
+          </td>
+        </tr>
+        <tr id='L125'>
+          <td class='lineno'>125</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L126'>
+          <td class='lineno'>126</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function loadPairs&#40;filename::String&#41;::Vector&#123;Tuple&#123;Unsigned,Unsigned&#125;&#125;</span>
+          </td>
+        </tr>
+        <tr id='L127'>
+          <td class='lineno'>127</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  sourceRegex &#61; r&quot;q &#40;&#91;0-9&#93;&#43;&#41; &#40;&#91;0-9&#93;&#43;&#41;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L128'>
+          <td class='lineno'>128</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  result &#61; Vector&#123;Tuple&#123;Unsigned,Unsigned&#125;&#125;&#40;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L129'>
+          <td class='lineno'>129</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L130'>
+          <td class='lineno'>130</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;filename&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L131'>
+          <td class='lineno'>131</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for line in readlines&#40;file&#41;</span>
+          </td>
+        </tr>
+        <tr id='L132'>
+          <td class='lineno'>132</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if line&#91;1&#93; &#33;&#61; &#39;q&#39;</span>
+          </td>
+        </tr>
+        <tr id='L133'>
+          <td class='lineno'>133</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        continue</span>
+          </td>
+        </tr>
+        <tr id='L134'>
+          <td class='lineno'>134</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L135'>
+          <td class='lineno'>135</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      temp &#61; match&#40;sourceRegex, line&#41;</span>
+          </td>
+        </tr>
+        <tr id='L136'>
+          <td class='lineno'>136</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      if &#33;isnothing&#40;temp&#41;</span>
+          </td>
+        </tr>
+        <tr id='L137'>
+          <td class='lineno'>137</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>        push&#33;&#40;result, &#40;Unsigned&#40;parse&#40;UInt64, temp.captures&#91;1&#93;&#41;&#41;, Unsigned&#40;parse&#40;UInt64, temp.captures&#91;2&#93;&#41;&#41;&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L138'>
+          <td class='lineno'>138</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      end #if</span>
+          </td>
+        </tr>
+        <tr id='L139'>
+          <td class='lineno'>139</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L140'>
+          <td class='lineno'>140</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #open</span>
+          </td>
+        </tr>
+        <tr id='L141'>
+          <td class='lineno'>141</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L142'>
+          <td class='lineno'>142</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return result</span>
+          </td>
+        </tr>
+        <tr id='L143'>
+          <td class='lineno'>143</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end</span>
+          </td>
+        </tr>
+        <tr id='L144'>
+          <td class='lineno'>144</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L145'>
+          <td class='lineno'>145</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function parseCommandLine&#40;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L146'>
+          <td class='lineno'>146</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  s &#61; ArgParse.ArgParseSettings&#40;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L147'>
+          <td class='lineno'>147</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L148'>
+          <td class='lineno'>148</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  ArgParse.@add_arg_table s begin</span>
+          </td>
+        </tr>
+        <tr id='L149'>
+          <td class='lineno'>149</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    &quot;--d&quot;</span>
+          </td>
+        </tr>
+        <tr id='L150'>
+          <td class='lineno'>150</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    help &#61; &quot;network file dir&quot;</span>
+          </td>
+        </tr>
+        <tr id='L151'>
+          <td class='lineno'>151</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    &quot;--ss&quot;</span>
+          </td>
+        </tr>
+        <tr id='L152'>
+          <td class='lineno'>152</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    help &#61; &quot;sources file dir&quot;</span>
+          </td>
+        </tr>
+        <tr id='L153'>
+          <td class='lineno'>153</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    default &#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L154'>
+          <td class='lineno'>154</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    &quot;--oss&quot;</span>
+          </td>
+        </tr>
+        <tr id='L155'>
+          <td class='lineno'>155</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    help &#61; &quot;output &#40;for sources&#41; file dir&quot;</span>
+          </td>
+        </tr>
+        <tr id='L156'>
+          <td class='lineno'>156</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    default &#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L157'>
+          <td class='lineno'>157</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    &quot;--p2p&quot;</span>
+          </td>
+        </tr>
+        <tr id='L158'>
+          <td class='lineno'>158</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    help &#61; &quot;pairs file dir&quot;</span>
+          </td>
+        </tr>
+        <tr id='L159'>
+          <td class='lineno'>159</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    default &#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L160'>
+          <td class='lineno'>160</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    &quot;--op2p&quot;</span>
+          </td>
+        </tr>
+        <tr id='L161'>
+          <td class='lineno'>161</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    help &#61; &quot;output &#40;for pairs&#41; dir&quot;</span>
+          </td>
+        </tr>
+        <tr id='L162'>
+          <td class='lineno'>162</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    default &#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L163'>
+          <td class='lineno'>163</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end</span>
+          </td>
+        </tr>
+        <tr id='L164'>
+          <td class='lineno'>164</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L165'>
+          <td class='lineno'>165</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  return ArgParse.parse_args&#40;s&#41;</span>
+          </td>
+        </tr>
+        <tr id='L166'>
+          <td class='lineno'>166</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end</span>
+          </td>
+        </tr>
+        <tr id='L167'>
+          <td class='lineno'>167</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L168'>
+          <td class='lineno'>168</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function writeResultForSources&#40;outputDir::String, networkDir::String, sourcesDir::String,</span>
+          </td>
+        </tr>
+        <tr id='L169'>
+          <td class='lineno'>169</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  network::MyGraphPrimitives.DirectedNetwork, algName::String, avgTime&#41;</span>
+          </td>
+        </tr>
+        <tr id='L170'>
+          <td class='lineno'>170</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;outputDir, &quot;w&quot;&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L171'>
+          <td class='lineno'>171</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;p res sp ss &#36;algName\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L172'>
+          <td class='lineno'>172</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;f &#36;networkDir &#36;sourcesDir\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L173'>
+          <td class='lineno'>173</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    numOfVertices &#61; length&#40;MyGraphPrimitives.getVertices&#40;network&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L174'>
+          <td class='lineno'>174</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    numOfEdges &#61; length&#40;network.costs&#41;</span>
+          </td>
+        </tr>
+        <tr id='L175'>
+          <td class='lineno'>175</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    costs &#61; map&#40;x -&gt; x, values&#40;network.costs&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L176'>
+          <td class='lineno'>176</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    minCost &#61; min&#40;costs...&#41;</span>
+          </td>
+        </tr>
+        <tr id='L177'>
+          <td class='lineno'>177</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    maxCost &#61; max&#40;costs...&#41;</span>
+          </td>
+        </tr>
+        <tr id='L178'>
+          <td class='lineno'>178</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;g &#36;numOfVertices &#36;numOfEdges &#36;minCost &#36;maxCost\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L179'>
+          <td class='lineno'>179</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;t &#36;avgTime\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L180'>
+          <td class='lineno'>180</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #open</span>
+          </td>
+        </tr>
+        <tr id='L181'>
+          <td class='lineno'>181</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #writeResultForSources</span>
+          </td>
+        </tr>
+        <tr id='L182'>
+          <td class='lineno'>182</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L183'>
+          <td class='lineno'>183</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function writeResultForPairs&#40;outputDir::String, networkDir::String, sourcesDir::String,</span>
+          </td>
+        </tr>
+        <tr id='L184'>
+          <td class='lineno'>184</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  network::MyGraphPrimitives.DirectedNetwork, algName::String, results&#41;</span>
+          </td>
+        </tr>
+        <tr id='L185'>
+          <td class='lineno'>185</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L186'>
+          <td class='lineno'>186</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  open&#40;outputDir, &quot;w&quot;&#41; do file</span>
+          </td>
+        </tr>
+        <tr id='L187'>
+          <td class='lineno'>187</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;p res sp ss &#36;algName\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L188'>
+          <td class='lineno'>188</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;f &#36;networkDir &#36;sourcesDir\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L189'>
+          <td class='lineno'>189</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    numOfVertices &#61; length&#40;MyGraphPrimitives.getVertices&#40;network&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L190'>
+          <td class='lineno'>190</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    numOfEdges &#61; length&#40;network.costs&#41;</span>
+          </td>
+        </tr>
+        <tr id='L191'>
+          <td class='lineno'>191</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    costs &#61; map&#40;x -&gt; x, values&#40;network.costs&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L192'>
+          <td class='lineno'>192</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    minCost &#61; min&#40;costs...&#41;</span>
+          </td>
+        </tr>
+        <tr id='L193'>
+          <td class='lineno'>193</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    maxCost &#61; max&#40;costs...&#41;</span>
+          </td>
+        </tr>
+        <tr id='L194'>
+          <td class='lineno'>194</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    write&#40;file, &quot;g &#36;numOfVertices &#36;numOfEdges &#36;minCost &#36;maxCost\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L195'>
+          <td class='lineno'>195</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L196'>
+          <td class='lineno'>196</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for x in results</span>
+          </td>
+        </tr>
+        <tr id='L197'>
+          <td class='lineno'>197</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      write&#40;file, &quot;d &#36;&#40;x&#91;1&#93;&#41; &#36;&#40;x&#91;2&#93;&#41; &#36;&#40;x&#91;3&#93;&#41;\n&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L198'>
+          <td class='lineno'>198</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L199'>
+          <td class='lineno'>199</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #open</span>
+          </td>
+        </tr>
+        <tr id='L200'>
+          <td class='lineno'>200</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #writeResultForPairs</span>
+          </td>
+        </tr>
+        <tr id='L201'>
+          <td class='lineno'>201</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L202'>
+          <td class='lineno'>202</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>function runForAlgorithm&#40;algorithm::Function, algorithmName::String&#41;</span>
+          </td>
+        </tr>
+        <tr id='L203'>
+          <td class='lineno'>203</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  parsedArgs &#61; parseCommandLine&#40;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L204'>
+          <td class='lineno'>204</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  network &#61; loadNetwork&#40;parsedArgs&#91;&quot;d&quot;&#93;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L205'>
+          <td class='lineno'>205</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  sources &#61; nothing</span>
+          </td>
+        </tr>
+        <tr id='L206'>
+          <td class='lineno'>206</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  pairs &#61; nothing</span>
+          </td>
+        </tr>
+        <tr id='L207'>
+          <td class='lineno'>207</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  output &#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L208'>
+          <td class='lineno'>208</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L209'>
+          <td class='lineno'>209</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  if parsedArgs&#91;&quot;ss&quot;&#93; &#33;&#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L210'>
+          <td class='lineno'>210</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    sources &#61; loadSources&#40;parsedArgs&#91;&quot;ss&quot;&#93;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L211'>
+          <td class='lineno'>211</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    output &#61; parsedArgs&#91;&quot;oss&quot;&#93;</span>
+          </td>
+        </tr>
+        <tr id='L212'>
+          <td class='lineno'>212</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    @assert output &#33;&#61; &quot;&quot; &quot;-oss arg requiered for ss arg&quot;</span>
+          </td>
+        </tr>
+        <tr id='L213'>
+          <td class='lineno'>213</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #if</span>
+          </td>
+        </tr>
+        <tr id='L214'>
+          <td class='lineno'>214</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L215'>
+          <td class='lineno'>215</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  if parsedArgs&#91;&quot;p2p&quot;&#93; &#33;&#61; &quot;&quot;</span>
+          </td>
+        </tr>
+        <tr id='L216'>
+          <td class='lineno'>216</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    pairs &#61; loadPairs&#40;parsedArgs&#91;&quot;p2p&quot;&#93;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L217'>
+          <td class='lineno'>217</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    output &#61; parsedArgs&#91;&quot;op2p&quot;&#93;</span>
+          </td>
+        </tr>
+        <tr id='L218'>
+          <td class='lineno'>218</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    @assert output &#33;&#61; &quot;&quot; &quot;-op2p arg requiered for p2p arg&quot;</span>
+          </td>
+        </tr>
+        <tr id='L219'>
+          <td class='lineno'>219</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #if</span>
+          </td>
+        </tr>
+        <tr id='L220'>
+          <td class='lineno'>220</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L221'>
+          <td class='lineno'>221</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  if &#33;isnothing&#40;sources&#41;</span>
+          </td>
+        </tr>
+        <tr id='L222'>
+          <td class='lineno'>222</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    times &#61; &#91;&#93;</span>
+          </td>
+        </tr>
+        <tr id='L223'>
+          <td class='lineno'>223</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for s in sources</span>
+          </td>
+        </tr>
+        <tr id='L224'>
+          <td class='lineno'>224</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      println&#40;&quot;Running for &#36;s&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L225'>
+          <td class='lineno'>225</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      t &#61; @elapsed algorithm&#40;network, s&#41;</span>
+          </td>
+        </tr>
+        <tr id='L226'>
+          <td class='lineno'>226</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      push&#33;&#40;times, t&#41;</span>
+          </td>
+        </tr>
+        <tr id='L227'>
+          <td class='lineno'>227</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L228'>
+          <td class='lineno'>228</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    result &#61; sum&#40;times&#41; / length&#40;times&#41;</span>
+          </td>
+        </tr>
+        <tr id='L229'>
+          <td class='lineno'>229</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    writeResultForSources&#40;output, parsedArgs&#91;&quot;d&quot;&#93;, parsedArgs&#91;&quot;ss&quot;&#93;, network, algorithmName, result&#41;</span>
+          </td>
+        </tr>
+        <tr id='L230'>
+          <td class='lineno'>230</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    return</span>
+          </td>
+        </tr>
+        <tr id='L231'>
+          <td class='lineno'>231</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #if</span>
+          </td>
+        </tr>
+        <tr id='L232'>
+          <td class='lineno'>232</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L233'>
+          <td class='lineno'>233</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  if &#33;isnothing&#40;pairs&#41;</span>
+          </td>
+        </tr>
+        <tr id='L234'>
+          <td class='lineno'>234</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    result &#61; &#91;&#93;</span>
+          </td>
+        </tr>
+        <tr id='L235'>
+          <td class='lineno'>235</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L236'>
+          <td class='lineno'>236</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    for p in pairs</span>
+          </td>
+        </tr>
+        <tr id='L237'>
+          <td class='lineno'>237</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      println&#40;&quot;Running for &#36;p&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L238'>
+          <td class='lineno'>238</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      r &#61; algorithm&#40;network, p&#91;1&#93;, p&#91;2&#93;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L239'>
+          <td class='lineno'>239</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>      push&#33;&#40;result, &#40;p&#91;1&#93;, p&#91;2&#93;, r&#41;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L240'>
+          <td class='lineno'>240</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    end #for</span>
+          </td>
+        </tr>
+        <tr id='L241'>
+          <td class='lineno'>241</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L242'>
+          <td class='lineno'>242</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    writeResultForPairs&#40;output, parsedArgs&#91;&quot;d&quot;&#93;, parsedArgs&#91;&quot;p2p&quot;&#93;, network, algorithmName, result&#41;</span>
+          </td>
+        </tr>
+        <tr id='L243'>
+          <td class='lineno'>243</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>    return</span>
+          </td>
+        </tr>
+        <tr id='L244'>
+          <td class='lineno'>244</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  end #if</span>
+          </td>
+        </tr>
+        <tr id='L245'>
+          <td class='lineno'>245</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L246'>
+          <td class='lineno'>246</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>  println&#40;&quot;Neither -ss nor -p2p specified&quot;&#41;</span>
+          </td>
+        </tr>
+        <tr id='L247'>
+          <td class='lineno'>247</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #createProgram</span>
+          </td>
+        </tr>
+        <tr id='L248'>
+          <td class='lineno'>248</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'></span>
+          </td>
+        </tr>
+        <tr id='L249'>
+          <td class='lineno'>249</td>
+          <td class='tracecount excl'></td>
+          <td class='tracecount incl'></td>
+          <td>
+            
+            
+            <span class='code'>end #module</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
+

@@ -8,8 +8,8 @@ import .MyGraphPrimitives, ArgParse
 export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runForAlgorithm
 
 @inline function dijkstraAlgorithmTemplate(graph::MyGraphPrimitives.DirectedNetwork,
-                                  source::Unsigned, queueInstance,
-                                  target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
+  source::Unsigned, queueInstance,
+  target::Union{Nothing,Unsigned}=nothing)::Union{Unsigned,Vector{Unsigned}}
 
   distances::Vector{Unsigned} = map(_ -> typemax(UInt64), MyGraphPrimitives.getVertices(graph))
   enqueue!(queueInstance, source, Unsigned(0))
@@ -20,7 +20,7 @@ export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runFor
     if !isnothing(target) && target == closestVertex
       return distances[target]
     end #if
-    
+
     for v in MyGraphPrimitives.getNeighbours(graph, closestVertex)
       newDist::Unsigned = MyGraphPrimitives.getWeight(graph, closestVertex, v) + distances[closestVertex]
       if newDist < distances[v]
@@ -31,19 +31,19 @@ export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runFor
   end #while
 
   return distances
-  
+
 end #dijkstraAlgorithmTemplate
 
-function dijkstraAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
-  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.PriorityQueueProxy{Unsigned, Unsigned}(), target)
+function dijkstraAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing,Unsigned}=nothing)::Union{Unsigned,Vector{Unsigned}}
+  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.PriorityQueueProxy{Unsigned,Unsigned}(), target)
 end #dijkstraAlgorithm
 
-function dialAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
+function dialAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing,Unsigned}=nothing)::Union{Unsigned,Vector{Unsigned}}
   return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.BucketPriorityQueue{Unsigned}(), target)
 end #dialAlgorithm
 
-function radixHeapAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing, Unsigned} = nothing)::Union{Unsigned, Vector{Unsigned}}
-  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.RadixHeap{Unsigned, UInt64}(), target)
+function radixHeapAlgorithm(graph::MyGraphPrimitives.DirectedNetwork, source::Unsigned, target::Union{Nothing,Unsigned}=nothing)::Union{Unsigned,Vector{Unsigned}}
+  return dijkstraAlgorithmTemplate(graph, source, MyDataStructures.RadixHeap{Unsigned,UInt64}(), target)
 end #radixHeapAlgorithm
 
 function loadNetwork(filename::String)::DirectedNetwork
@@ -57,7 +57,7 @@ function loadNetwork(filename::String)::DirectedNetwork
         continue
       end #if
       temp = match(nameRegex, line)
-      if !isnothing(temp)      
+      if !isnothing(temp)
         networkSize = parse(Unsigned, temp.captures[1])
         result = DirectedNetwork(networkSize)
         continue
@@ -88,7 +88,7 @@ function loadNetwork(filename::String)::MyGraphPrimitives.DirectedNetwork
         continue
       end #if
       temp = match(nameRegex, line)
-      if !isnothing(temp)      
+      if !isnothing(temp)
         networkSize = Unsigned(parse(UInt64, temp.captures[1]))
         result = MyGraphPrimitives.DirectedNetwork(networkSize)
         continue
@@ -123,9 +123,9 @@ function loadSources(filename::String)::Vector{Unsigned}
   return result
 end
 
-function loadPairs(filename::String)::Vector{Tuple{Unsigned, Unsigned}}
+function loadPairs(filename::String)::Vector{Tuple{Unsigned,Unsigned}}
   sourceRegex = r"q ([0-9]+) ([0-9]+)"
-  result = Vector{Tuple{Unsigned, Unsigned}}()
+  result = Vector{Tuple{Unsigned,Unsigned}}()
 
   open(filename) do file
     for line in readlines(file)
@@ -147,26 +147,26 @@ function parseCommandLine()
 
   ArgParse.@add_arg_table s begin
     "--d"
-      help = "network file dir"
+    help = "network file dir"
     "--ss"
-      help = "sources file dir"
-      default = ""
+    help = "sources file dir"
+    default = ""
     "--oss"
-      help = "output (for sources) file dir"
-      default = ""
+    help = "output (for sources) file dir"
+    default = ""
     "--p2p"
-      help = "pairs file dir"
-      default = ""
+    help = "pairs file dir"
+    default = ""
     "--op2p"
-      help = "output (for pairs) dir"
-      default = ""
+    help = "output (for pairs) dir"
+    default = ""
   end
 
   return ArgParse.parse_args(s)
 end
 
 function writeResultForSources(outputDir::String, networkDir::String, sourcesDir::String,
-                               network::MyGraphPrimitives.DirectedNetwork, algName::String, avgTime)
+  network::MyGraphPrimitives.DirectedNetwork, algName::String, avgTime)
   open(outputDir, "w") do file
     write(file, "p res sp ss $algName\n")
     write(file, "f $networkDir $sourcesDir\n")
@@ -192,7 +192,7 @@ function writeResultForPairs(outputDir::String, networkDir::String, sourcesDir::
     minCost = min(costs...)
     maxCost = max(costs...)
     write(file, "g $numOfVertices $numOfEdges $minCost $maxCost\n")
-    
+
     for x in results
       write(file, "d $(x[1]) $(x[2]) $(x[3])\n")
     end #for
@@ -226,7 +226,7 @@ function runForAlgorithm(algorithm::Function, algorithmName::String)
       push!(times, t)
     end #for
     result = sum(times) / length(times)
-    writeResultForSources(output, parsedArgs["d"], parsedArgs["ss"], network, algorithmName, result)      
+    writeResultForSources(output, parsedArgs["d"], parsedArgs["ss"], network, algorithmName, result)
     return
   end #if
 
@@ -238,7 +238,7 @@ function runForAlgorithm(algorithm::Function, algorithmName::String)
       r = algorithm(network, p[1], p[2])
       push!(result, (p[1], p[2], r))
     end #for
-    
+
     writeResultForPairs(output, parsedArgs["d"], parsedArgs["p2p"], network, algorithmName, result)
     return
   end #if

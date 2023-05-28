@@ -4,7 +4,7 @@ using StatProfilerHTML
 
 function main()
   n = loadNetwork("ch9-1.1/inputs/USA-road-d/USA-road-d.BAY.gr")
-  @time dijkstraAlgorithm(n, Unsigned(150169))
+  @time radixHeapAlgorithm(n, Unsigned(150169))
 end
 
 main()

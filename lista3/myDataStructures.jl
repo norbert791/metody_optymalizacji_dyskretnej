@@ -25,16 +25,18 @@ end
 
 #Can be optimized to store lowest nonempty bucket
 mutable struct BucketPriorityQueue{T}
-  buckets::Dict{Unsigned,DataStructures.MutableLinkedList{T}}
+  buckets::Dict{Unsigned,Vector{T}}
+  presentBuckets::DataStructures.SortedSet{Unsigned}
   numOfElems::Unsigned
 
   function BucketPriorityQueue{T}() where {T<:Any}
     buckets = Dict()
-    return new{T}(buckets, Unsigned(0))
+    presentBuckets = DataStructures.SortedSet{Unsigned}()
+    return new{T}(buckets, presentBuckets, Unsigned(0))
   end #BucketPriorityQueue
 end
 
-@inline function findfirst(queue::DataStructures.MutableLinkedList{T}, elem::T) where {T<:Any}
+@inline function findfirst(queue::Vector{T}, elem::T) where {T<:Any}
   index = 1
   for v in queue
     if v == elem
@@ -49,7 +51,8 @@ end
 
 function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) where {T<:Any}
   if !haskey(queue.buckets, priority + 1)
-    queue.buckets[priority+1] = DataStructures.MutableLinkedList{T}()
+    queue.buckets[priority+1] = Vector{T}()
+    DataStructures.push!(queue.presentBuckets, priority + 1)
   end #if
   index = findfirst(queue.buckets[priority+1], elem)
   if isnothing(index)
@@ -61,7 +64,7 @@ function enqueue!(queue::BucketPriorityQueue{T}, elem::T, priority::Unsigned) wh
 end #enqueue!
 
 #ordinary min seems to have performance issue
-@inline function myMin(dict::Dict{Unsigned,DataStructures.MutableLinkedList{T}})::Unsigned where {T<:Any}
+@inline function myMin(dict::Dict{Unsigned,Vector{T}})::Unsigned where {T<:Any}
   minKey::Unsigned = first(dict)[1]
   for (key, _) in dict
     if key < minKey
@@ -77,12 +80,15 @@ function dequeue!(queue::BucketPriorityQueue{T})::T where {T<:Any}
     throw(BoundsError("The queue is empty"))
   end #if
 
-  priority = myMin(queue.buckets)
-  result = popfirst!(queue.buckets[priority])
+  priority = first(queue.presentBuckets)
+  # All the elements in the same bucket have identical priority
+  # so it doesn't matter which one is poped first
+  result = pop!(queue.buckets[priority])
   queue.numOfElems -= 1
 
-  if DataStructures.isempty(queue.buckets[priority])
+  if Base.isempty(queue.buckets[priority])
     delete!(queue.buckets, priority)
+    pop!(queue.presentBuckets, priority)
   end #if
 
   return result

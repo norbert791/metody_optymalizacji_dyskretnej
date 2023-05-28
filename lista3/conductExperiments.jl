@@ -12,10 +12,12 @@ function runExperimentsFromDirectory(dirName::String, algorithm::Function)::Vect
   files = readdir(dirName)
   files = map(x -> splitext(x)[1], files)
   distinctFiles = Set(files)
+  distinctFiles = filter(x -> count(y -> y == '.', x) <= 2, distinctFiles)
 
   result::Vector{ExperimentResult} = []
   try
     for name in distinctFiles
+      println("Loading network: $name")
       network = MyGraphAlgorithms.loadNetwork("$dirName/$name.gr")
       sources = MyGraphAlgorithms.loadSources("$dirName/$name.ss")
       totalTime = 0
@@ -29,7 +31,7 @@ function runExperimentsFromDirectory(dirName::String, algorithm::Function)::Vect
       end #for
 
       totalTime /= counter
-      push!(result, ExperimentResult(name, length(MyGraphAlgorithms.getVertices(network)), length(network.costs), totalTime))
+      push!(result, ExperimentResult(name, Int(length(MyGraphAlgorithms.MyGraphPrimitives.getVertices(network))), Int(length(network.costs)), totalTime))
     end #for
   catch err
     showerror(stdout, err)
@@ -39,11 +41,36 @@ function runExperimentsFromDirectory(dirName::String, algorithm::Function)::Vect
   end
 end
 
-function main()
-  directory::String = "ch9-1.1/inputs/Long-C/"
+function runAndAppend(dirName::String, algorithm::Function, funName::String, output::String)
+  v = runExperimentsFromDirectory(dirName, algorithm)
+  open("$output_$funName", "a") do file
+    for el::ExperimentResult in v
+      write(file, "$(el.instanceName),$(el.numOfVertices),$(el.numOfEdges),$(el.instanceTime)\n")
+    end #for
+  end
+end
 
-  v = runExperimentsFromDirectory("testDir", MyGraphAlgorithms.dijkstraAlgorithm)
-  @show v
+function main()
+  mainDir::String = "ch9-1.1/inputs/"
+
+  directories = ["Long-C"]#, "Long-n", "Random4-C", "random4-n", "Square-C", "Square-n"]
+
+  algs = [(MyGraphAlgorithms.dijkstraAlgorithm, "dijkstra"), (MyGraphAlgorithms.dialAlgorithm, "dial"), (MyGraphAlgorithms.radixHeapAlgorithm, "radix")]
+
+  outputDir = "experimentsOutput/"
+
+  for dir in directories
+    fullDir = mainDir * dir
+    for al in algs
+      println("GOING FOR $(al[2]) in $dir")
+      v = runExperimentsFromDirectory(fullDir, al[1])
+      open(outputDir * "$(dir)_$(al[2])", "a") do file
+        for temp in v
+          write(file, "$(temp.instanceName),$(temp.numOfVertices),$(temp.numOfEdges),$(temp.instanceTime)\n")
+        end #for
+      end
+    end #for
+  end #for
 end
 
 main()

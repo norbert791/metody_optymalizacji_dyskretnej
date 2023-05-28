@@ -5,7 +5,7 @@ include("myDataStructures.jl")
 using .MyDataStructures
 
 import .MyGraphPrimitives, ArgParse
-export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runForAlgorithm
+export dijkstraAlgorithm, dialAlgorithm, radixHeapAlgorithm, loadNetwork, runForAlgorithm#, MyGraphPrimitives.DirectedNetwork, MyGraphPrimitives.getVertices
 
 @inline function dijkstraAlgorithmTemplate(graph::MyGraphPrimitives.DirectedNetwork,
   source::Unsigned, queueInstance,

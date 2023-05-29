@@ -53,9 +53,9 @@ end
 function main()
   mainDir::String = "ch9-1.1/inputs/"
 
-  directories = #=["Long-C", ["Long-n"], =#["Random4-C"]#, "random4-n", "Square-C", "Square-n"]
+  directories = #=["Long-C", "Long-n", "Random4-C", =#["Random4-n", "Square-C", "Square-n"]
 
-  algs = #=[(MyGraphAlgorithms.dijkstraAlgorithm, "dijkstra"), =#[(MyGraphAlgorithms.dialAlgorithm, "dial"), (MyGraphAlgorithms.radixHeapAlgorithm, "radix")]
+  algs = [(MyGraphAlgorithms.dijkstraAlgorithm, "dijkstra")]#[(MyGraphAlgorithms.dialAlgorithm, "dial"), (MyGraphAlgorithms.radixHeapAlgorithm, "radix")]
 
   outputDir = "experimentsOutput/"
 

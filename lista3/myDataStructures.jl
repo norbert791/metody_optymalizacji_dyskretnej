@@ -158,7 +158,7 @@ function dequeue!(queue::RadixHeap{T,E})::T where {T<:Any,E<:Unsigned}
   end #for
 
   bucket = queue.buckets[foundIndex]
-  minElem = popat!(bucket, argmin(x -> bucket[x][2], 1:length(bucket)))
+  minElem = Base.popat!(bucket, argmin(x -> bucket[x][2], 1:length(bucket)))
   queue.lastDeletion = minElem[2]
   redistibuteBuckets!(queue, foundIndex)
 

@@ -23,11 +23,18 @@ function runExperimentsFromDirectory(dirName::String, algorithm::Function)::Vect
       totalTime = 0
       counter = 0
 
+      #avg max timeout * number of sources
+      timeout = 10 * length(sources)
+
       for s in sources
         println("Running for: $s")
         temp = @elapsed algorithm(network, s)
         totalTime += temp
         counter += 1
+        if (totalTime > timeout)
+          println("Timeout reached")
+          break
+        end #if
       end #for
 
       totalTime /= counter
@@ -53,9 +60,9 @@ end
 function main()
   mainDir::String = "ch9-1.1/inputs/"
 
-  directories = #=["Long-C", "Long-n", "Random4-C", =#["Random4-n", #="Square-C",=# "Square-n"]
+  directories = #=["Long-C", "Long-n", =#["Random4-C"]#, "Random4-n", =#["Square-C"]#, "Square-n"]
 
-  algs = #=[(MyGraphAlgorithms.dijkstraAlgorithm, "dijkstra")]=#[(MyGraphAlgorithms.dialAlgorithm, "dial"), (MyGraphAlgorithms.radixHeapAlgorithm, "radix")]
+  algs = #=[(MyGraphAlgorithms.dijkstraAlgorithm, "dijkstra")][(MyGraphAlgorithms.dialAlgorithm, "dial"), =#[(MyGraphAlgorithms.radixHeapAlgorithm, "radix")]
 
   outputDir = "experimentsOutput/"
 

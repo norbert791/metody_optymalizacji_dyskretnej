@@ -23,6 +23,12 @@ function runExperimentsFromDirectory(dirName::String, algorithm::Function)::Vect
       totalTime = 0
       counter = 0
 
+      if name in ["Random4-C.0.0", "Random4-C.1.0", "Random4-C.2.0"]
+        println("blacklisted: $name")
+        push!(result, ExperimentResult(name, Int(length(MyGraphAlgorithms.MyGraphPrimitives.getVertices(network))), Int(length(network.costs)), NaN))
+        continue
+      end
+
       #avg max timeout * number of sources
       timeout = 10 * length(sources)
 

@@ -1,4 +1,5 @@
 instance,numOfVertices,numOfEdges,averageTime
+instance,numOfVertices,numOfEdges,averageTime
 Square-C.15.0,1048576,4190208,4.5274520561
 Square-C.3.0,1048576,4190208,4.1334390483
 Square-C.4.0,1048576,4190208,4.5456477132

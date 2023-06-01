@@ -25,6 +25,35 @@ function main()
     df = innerjoin(df, df3, on=[:numOfVertices, :numOfEdges, :instance])
     sort!(df, [:numOfVertices, :numOfEdges])
 
+    transform!(df, AsTable([:dijkstra, :dial, :radix]) => ByRow(argmin) => :winner)
+
+    # v1 = @chain df begin
+    #   getproperty(:dijkstra) # same as above
+    # end
+
+    # v2 = @chain df begin
+    #   getproperty(:dial) # same as above
+    # end
+
+    # v3 = @chain df begin
+    #   getproperty(:radix) # same as above
+    # end
+
+    # v = []
+
+    # for i in eachindex(v1)
+    #   minVal
+    #   if v1[i] == min(v1[i], v2[i], v3[i])
+    #     push!(v, "dijkstra")
+    #   elseif v2[i] < v3[i]
+    #     push!(v, "dial")
+    #   else
+    #     push!(v, "radix")
+    #   end #if
+    # end #for
+
+    # df[!, "winner"] = v
+
     CSV.write("processedOutput/$inst.csv", df)
   end #for
 

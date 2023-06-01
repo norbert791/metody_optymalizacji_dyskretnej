@@ -1,4 +1,5 @@
 instance,numOfVertices,numOfEdges,averageTime
+instance,numOfVertices,numOfEdges,averageTime
 Long-C.1.0,1048576,4063200,3.0665474171000002
 Long-C.4.0,1048576,4063200,4.3801440332
 Long-C.10.0,1048576,4063200,4.3744681655

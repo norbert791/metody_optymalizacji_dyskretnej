@@ -1,4 +1,5 @@
 instance,numOfVertices,numOfEdges,averageTime
+instance,numOfVertices,numOfEdges,averageTime
 Random4-C.0.0,1048576,4194299,5.993001857099999
 Random4-C.14.0,1048576,4194299,10.9672073849
 Random4-C.13.0,1048576,4194300,9.535771383600002

@@ -223,6 +223,85 @@ function printHypercube(cube::Hypercube)
       end #for
     end #if
   end #while
+end #printHypercube
+
+mutable struct BiparteGraph
+  capacity::Dict{Tuple{UInt32,UInt32},Int8}
+  neighbours::Dict{UInt32,Vector{UInt32}}
+  getReverseNeighbours::Dict{UInt32,Vector{UInt32}}
+end #BiparteGraph
+
+
+function getNeighbours(graph::BiparteGraph, vertex::UInt32)::Vector{UInt32}
+  return get(graph.neighbours, vertex, [])
+end #getNeighbours
+
+function getReverseNeighbours(graph::BiparteGraph, vertex::UInt32)::Vector{UInt32}
+  return get(graph.getReverseNeighbours, vertex, [])
+end #getReverseNeighbours
+
+function bestFirstSearch(graph::BiparteGraph, flow::Dict{Tuple{UInt32,UInt32},Int8}, from::UInt32)::Dict{UInt32,UInt32}
+  queue = DataStructures.Queue{UInt32}()
+  parent::Dict{UInt32,UInt32} = Dict{UInt32,UInt32}()
+
+  DataStructures.enqueue!(queue, from)
+
+  while !isempty(queue)
+    current = DataStructures.dequeue!(queue)
+
+    for neighbour in getNeighbours(graph, current)
+      if !haskey(parent, neighbour) && neighbour != from && getEdgeWeight(graph, current, neighbour) > get(flow, (current, neighbour), 0)
+        DataStructures.enqueue!(queue, neighbour)
+        parent[neighbour] = current
+      end #if
+    end #for
+
+    for neighbour in getReverseNeighbours(graph, current)
+      if !haskey(parent, current) && current != from && 0 > get(flow, (neighbour, current), 0)
+        DataStructures.enqueue!(queue, current)
+        parent[current] = neighbour
+      end #if
+    end #for
+  end #while
+
+  return parent
+end #bestFirstSearch
+
+function EdmondsKarp(graph::BiparteGraph, from::UInt32, to::UInt32)::Tuple{Dict{Tuple{UInt32,UInt32},Int8},UInt64}
+  flow::Dict{Tuple{UInt32,UInt32},Int8} = Dict()
+
+  augmentingPaths = 0
+
+  while true
+    path = bestFirstSearch(graph, flow, from, to)
+    augmentingPaths += 1
+
+    if !haskey(path, to)
+      break
+    end #if
+
+    deltaFlow = typemax(UInt32)
+    current = to
+
+    while current != from
+      deltaFlow = min(deltaFlow, getEdgeWeight(graph, path[current], current) - get(flow, (path[current], current), 0))
+      current = path[current]
+    end #while
+
+    current = to
+
+    while current != from
+      flow[(path[current], current)] = get(flow, (path[current], current), 0) + deltaFlow
+      flow[(current, path[current])] = get(flow, (current, path[current]), 0) - deltaFlow
+      current = path[current]
+    end #while
+
+  end #while
+
+  #Comment this line to return residual graph
+  filter!(x -> x.second, flow)
+
+  return flow, augmentingPaths
 end
 
 end #HypercubeGraph

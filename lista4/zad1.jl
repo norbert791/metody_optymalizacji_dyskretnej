@@ -26,7 +26,11 @@ function main()
 
   printHypercube(cube)
 
-  flow, augPaths = EdmondsKarp(cube, UInt16(0), UInt16(2^cubeSize - 1))
+  stats = @timed EdmondsKarp(cube, UInt16(0), UInt16(2^cubeSize - 1))
+
+  flow = stats.value[1]
+  augmentingPaths = stats.value[2]
+  execTime = stats.time + stats.gctime
 
   flowSum = 0
 
@@ -40,6 +44,8 @@ function main()
     println(flow)
   end #if
 
-end
+  write(stderr, "$execTime\n")
+  write(stderr, "$augmentingPaths\n")
+end #main
 
 main()

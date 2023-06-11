@@ -79,4 +79,30 @@ end #testset
       @test getEdgeWeight(cube, UInt16(i), e) == UInt32(0)
     end
   end
-end
+end #testset
+
+@testset "EdmondsKarp" begin
+  cube = Hypercube(3)
+
+  setEdgeWeight!(cube, UInt16(0), UInt16(1), UInt32(2))
+  setEdgeWeight!(cube, UInt16(0), UInt16(2), UInt32(3))
+  setEdgeWeight!(cube, UInt16(0), UInt16(4), UInt32(3))
+  setEdgeWeight!(cube, UInt16(1), UInt16(5), UInt32(1))
+  setEdgeWeight!(cube, UInt16(1), UInt16(3), UInt32(1))
+  setEdgeWeight!(cube, UInt16(2), UInt16(3), UInt32(3))
+  setEdgeWeight!(cube, UInt16(2), UInt16(6), UInt32(2))
+  setEdgeWeight!(cube, UInt16(4), UInt16(5), UInt32(3))
+  setEdgeWeight!(cube, UInt16(4), UInt16(6), UInt32(1))
+  setEdgeWeight!(cube, UInt16(5), UInt16(7), UInt32(2))
+  setEdgeWeight!(cube, UInt16(6), UInt16(7), UInt32(1))
+  setEdgeWeight!(cube, UInt16(3), UInt16(7), UInt32(2))
+
+  flow, _ = EdmondsKarp(cube, UInt16(0), UInt16(7))
+  flowSum = 0
+
+  for e in getNeighbours(cube, UInt16(0))
+    flowSum += get(flow, (UInt16(0), e), 0)
+  end #for
+
+  @test flowSum == UInt32(5)
+end #testset

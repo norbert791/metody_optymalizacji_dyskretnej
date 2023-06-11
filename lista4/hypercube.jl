@@ -3,7 +3,7 @@ module HypercubeGraph
 import DataStructures
 
 export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices,
-  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube
+  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube
 
 mutable struct Hypercube
   size::UInt8
@@ -127,25 +127,26 @@ end #getAdjacentVertices
 
 @inline function bestFirstSearch(cube::Hypercube, flow::Dict{Tuple{UInt16,UInt16},Int64}, from::UInt16, to::UInt16)::Dict{UInt16,UInt16}
   queue = DataStructures.Queue{UInt16}()
+  parent::Dict{UInt16,UInt16} = Dict{UInt16,UInt16}()
+
+  DataStructures.enqueue!(queue, from)
 
   while !isempty(queue)
-    current = dequeue!(queue)
+    current = DataStructures.dequeue!(queue)
     if current == to
       break
     end #if
 
-    parent = Dict{UInt16,UInt16}()
-
     for neighbour in getNeighbours(cube, current)
-      if !hasKey(parent, neighbour) && neighbour != from && getEdgeWeight(cube, current, neighbour) > get(flow, (current, neighbour), 0)
-        enqueue!(queue, neighbour)
+      if !haskey(parent, neighbour) && neighbour != from && getEdgeWeight(cube, current, neighbour) > get(flow, (current, neighbour), 0)
+        DataStructures.enqueue!(queue, neighbour)
         parent[neighbour] = current
       end #if
     end #for
 
     for neighbour in getReverseNeighbours(cube, current)
-      if !hasKey(parent, current) && current != from && 0 > get(flow, (neighbour, current), 0)
-        enqueue!(queue, current)
+      if !haskey(parent, current) && current != from && 0 > get(flow, (neighbour, current), 0)
+        DataStructures.enqueue!(queue, current)
         parent[current] = neighbour
       end #if
     end #for
@@ -154,13 +155,16 @@ end #getAdjacentVertices
   return parent
 end #bestFirstSearch
 
-function EdmondsKarp(cube::Hypercube, from::UInt16, to::UInt16)::Dict{Tuple{UInt16,UInt16},Int64}
+function EdmondsKarp(cube::Hypercube, from::UInt16, to::UInt16)::Tuple{Dict{Tuple{UInt16,UInt16},Int64},UInt64}
   flow::Dict{Tuple{UInt16,UInt16},Int64} = Dict()
+
+  augmentingPaths = 0
 
   while true
     path = bestFirstSearch(cube, flow, from, to)
+    augmentingPaths += 1
 
-    if !hasKey(path, to)
+    if !haskey(path, to)
       break
     end #if
 
@@ -175,14 +179,17 @@ function EdmondsKarp(cube::Hypercube, from::UInt16, to::UInt16)::Dict{Tuple{UInt
     current = to
 
     while current != from
-      flow[(path[current], current)] += deltaFlow
-      flow[(current, path[current])] -= deltaFlow
+      flow[(path[current], current)] = get(flow, (path[current], current), 0) + deltaFlow
+      flow[(current, path[current])] = get(flow, (current, path[current]), 0) - deltaFlow
       current = path[current]
     end #while
 
   end #while
 
-  return flow
+  #Comment this line to return residual graph
+  filter!(x -> x.second > 0, flow)
+
+  return flow, augmentingPaths
 end #EdmondsKarp
 
 @inline function randomWeight(cube::Hypercube, from::UInt16, to::UInt16)::UInt32
@@ -190,7 +197,7 @@ end #EdmondsKarp
   return UInt32(rand(1:upperBound))
 end
 
-function randomHyperCube(size::Number)::Hypercube
+function randomHyperCube(size::Integer)::Hypercube
   cube = Hypercube(size)
   for from::UInt16 in 0:2^size-1
     for to::UInt16 in getNeighbours(cube, from)
@@ -199,5 +206,23 @@ function randomHyperCube(size::Number)::Hypercube
   end #for
   return cube
 end #randomHyperCube
+
+function printHypercube(cube::Hypercube)
+  start = UInt16(0)
+  markedVertices = zeros(Bool, 2^cube.size)
+  queue = DataStructures.Queue{UInt16}()
+  DataStructures.enqueue!(queue, start)
+
+  while !isempty(queue)
+    temp = DataStructures.dequeue!(queue)
+    if !markedVertices[temp+1]
+      markedVertices[temp+1] = true
+      for neighbour in getNeighbours(cube, temp)
+        println("Edge: ($temp, $neighbour) Capacity: $(getEdgeWeight(cube, temp, neighbour))")
+        DataStructures.enqueue!(queue, neighbour)
+      end #for
+    end #if
+  end #while
+end
 
 end #HypercubeGraph

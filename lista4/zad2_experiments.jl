@@ -56,7 +56,7 @@ function main()
     open("experiments/zad2_k$k.csv", "w") do file
       write(file, "i,avgMaxMatching\n")
       for i in 1:k
-        write(file, "$k,$i,$(exps[(k, i)].flow)\n")
+        write(file, "$i,$(exps[(k, i)].flow)\n")
       end #for
     end #open
   end #for
@@ -64,7 +64,7 @@ function main()
   for i in 1:maxSize
     open("experiments/zad2_i$i.csv", "w") do file
       write(file, "k,avgTime\n")
-      for k in (max(i,3)):maxSize
+      for k in (max(i, 3)):maxSize
         write(file, "$k,$(exps[(k, i)].execTime)\n")
       end #for
     end #open

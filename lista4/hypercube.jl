@@ -2,8 +2,10 @@ module HypercubeGraph
 
 import DataStructures
 
+using StatsBase
+
 export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices,
-  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube
+  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube, randomBiparteGraph, printBiparteGraph
 
 mutable struct Hypercube
   size::UInt8
@@ -15,7 +17,7 @@ mutable struct Hypercube
     if size < 1 || size > 16
       throw(error("incorrect size"))
     end #if
-    return new(UInt8(size), zeros(2^(size) * size))
+    return new(UInt8(size), zeros(2^(size) << UInt16(ceil(log2(size)))))
   end #Hypercube
 
 end #Hypercube
@@ -45,7 +47,7 @@ end #hammingDistance
     index = index << 1
   end #while
 
-  counter += from << UInt(ceil(log2(index)))
+  counter += from << UInt(ceil(log2(cube.size)))
 
   return counter + 1
 end #computeIndex
@@ -226,28 +228,55 @@ function printHypercube(cube::Hypercube)
 end #printHypercube
 
 mutable struct BiparteGraph
-  capacity::Dict{Tuple{UInt32,UInt32},Int8}
-  neighbours::Dict{UInt32,Vector{UInt32}}
-  getReverseNeighbours::Dict{UInt32,Vector{UInt32}}
+  size::UInt8
+  capacity::Dict{Tuple{UInt64,UInt64},Int8}
+  #Mapping from V1 to V2
+  neighbours::Dict{UInt64,Vector{UInt64}}
+  #Mapping from V2 to V1
+  reverseNeighbours::Dict{UInt64,Vector{UInt64}}
 end #BiparteGraph
 
+@inline function getNeighbours(graph::BiparteGraph, vertex::UInt64)::Union{Vector{UInt64},UnitRange{UInt64}}
+  if vertex == typemax(UInt64) - 1
+    return UInt64(0):UInt64(2^graph.size - 1)
+  end #if
 
-function getNeighbours(graph::BiparteGraph, vertex::UInt32)::Vector{UInt32}
-  return get(graph.neighbours, vertex, [])
+  return get(graph.neighbours, vertex, [typemax(UInt64)])
 end #getNeighbours
 
-function getReverseNeighbours(graph::BiparteGraph, vertex::UInt32)::Vector{UInt32}
-  return get(graph.getReverseNeighbours, vertex, [])
+@inline function getReverseNeighbours(graph::BiparteGraph, vertex::UInt64)::Union{Vector{UInt64},UnitRange{UInt64}}
+  if vertex == typemax(UInt64)
+    return UInt64(2^graph.size):UInt64((2^graph.size) * 2 - 1)
+  end #if
+
+  if vertex < graph.size
+    return [typemax(UInt64) - 1]
+  end #if
+
+  return get(graph.reverseNeighbours, vertex, Vector{UInt64}())
 end #getReverseNeighbours
 
-function bestFirstSearch(graph::BiparteGraph, flow::Dict{Tuple{UInt32,UInt32},Int8}, from::UInt32)::Dict{UInt32,UInt32}
-  queue = DataStructures.Queue{UInt32}()
-  parent::Dict{UInt32,UInt32} = Dict{UInt32,UInt32}()
+@inline function getEdgeWeight(graph::BiparteGraph, from::UInt64, to::UInt64)::Int8
+  if from == typemax(UInt64) - 1 && to < 2^graph.size - 1
+    return UInt8(1)
+  end #if
+  if from >= 2^graph.size && from < 2^(graph.size + 1) && to == typemax(UInt64)
+    return UInt8(1)
+  end #if
+  return get(graph.capacity, (from, to), 0)
+end #getEdgeWeight
+
+@inline function bestFirstSearch(graph::BiparteGraph, flow::Dict{Tuple{UInt64,UInt64},Int8}, from::UInt64, to::UInt64)::Dict{UInt64,UInt64}
+  queue = DataStructures.Queue{UInt64}()
+  parent::Dict{UInt64,UInt64} = Dict{UInt64,UInt64}()
 
   DataStructures.enqueue!(queue, from)
 
   while !isempty(queue)
     current = DataStructures.dequeue!(queue)
+    if current == to
+      break
+    end #i
 
     for neighbour in getNeighbours(graph, current)
       if !haskey(parent, neighbour) && neighbour != from && getEdgeWeight(graph, current, neighbour) > get(flow, (current, neighbour), 0)
@@ -267,8 +296,8 @@ function bestFirstSearch(graph::BiparteGraph, flow::Dict{Tuple{UInt32,UInt32},In
   return parent
 end #bestFirstSearch
 
-function EdmondsKarp(graph::BiparteGraph, from::UInt32, to::UInt32)::Tuple{Dict{Tuple{UInt32,UInt32},Int8},UInt64}
-  flow::Dict{Tuple{UInt32,UInt32},Int8} = Dict()
+function EdmondsKarp(graph::BiparteGraph, from::UInt64, to::UInt64)::Tuple{Dict{Tuple{UInt64,UInt64},Int8},UInt64}
+  flow::Dict{Tuple{UInt64,UInt64},Int8} = Dict()
 
   augmentingPaths = 0
 
@@ -299,9 +328,34 @@ function EdmondsKarp(graph::BiparteGraph, from::UInt32, to::UInt32)::Tuple{Dict{
   end #while
 
   #Comment this line to return residual graph
-  filter!(x -> x.second, flow)
+  filter!(x -> x.second > 0, flow)
 
   return flow, augmentingPaths
+end
+
+function randomBiparteGraph(size::Integer, degree::Integer)::BiparteGraph
+  if degree > size
+    throw(ArgumentError("Degree cannot be greater than size"))
+  end #if
+  graph = BiparteGraph(size, Dict(), Dict(), Dict())
+
+  for i in 0:(2^size-1)
+    neighbours = sample((2^size):((2^size)*2-1), degree, replace=false)
+    graph.neighbours[i] = neighbours
+    for neighbour in neighbours
+      graph.capacity[(i, neighbour)] = 1
+      if !haskey(graph.reverseNeighbours, neighbours)
+        graph.reverseNeighbours[neighbour] = []
+      end #if
+      push!(graph.reverseNeighbours[neighbour], i)
+    end #for
+  end #for
+
+  return graph
+end #randomBiparteGraph
+
+function printBiparteGraph(graph::BiparteGraph)
+  println(graph.neighbours)
 end
 
 end #HypercubeGraph

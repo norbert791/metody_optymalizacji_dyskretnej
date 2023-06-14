@@ -24,7 +24,7 @@ function main()
   cubeSize = parse(UInt64, args["size"])
   cube = randomHyperCube(cubeSize)
 
-  printHypercube(cube)
+  # printHypercube(cube)
 
   stats = @timed EdmondsKarp(cube, UInt16(0), UInt16(2^cubeSize - 1))
 

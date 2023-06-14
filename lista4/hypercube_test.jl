@@ -72,7 +72,7 @@ end #testset
 end #testset
 
 @testset "Random hypercube" begin
-  cube = randomHyperCube(4)
+  cube = randomHyperCube(5)
 
   for i in 1:15
     for e in getReverseNeighbours(cube, UInt16(i))

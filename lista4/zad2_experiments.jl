@@ -2,18 +2,19 @@ include("hypercube.jl")
 using .HypercubeGraph
 
 struct experimentResults
-  flow::UInt32
-  augmentingPaths::UInt32
+  flow::Float64
+  augmentingPaths::Float64
   execTime::Float64
 end #experimentResults
 
 function main()
 
   numberOfRepetitions = 40
+  maxSize = 10
 
   exps = Dict()
 
-  for k in 1:16
+  for k in 3:maxSize
     println("Running for k = $k")
 
     for i in 1:k
@@ -26,7 +27,7 @@ function main()
       for _ in 1:numberOfRepetitions
         cube = randomBiparteGraph(k, i)
 
-        stats = @timed EdmondsKarp(cube, UInt64(0), UInt64(2^k - 1))
+        stats = @timed EdmondsKarp(cube, UInt64(typemax(UInt64) - 1), UInt64(typemax(UInt64)))
 
         flow = stats.value[1]
         augmentingPaths = stats.value[2]
@@ -34,8 +35,8 @@ function main()
 
         flowSum = 0
 
-        for e in getNeighbours(cube, UInt64(0))
-          flowSum += get(flow, (UInt64(0), e), 0)
+        for e in getNeighbours(cube, UInt64(typemax(UInt64) - 1))
+          flowSum += get(flow, (UInt64(typemax(UInt64) - 1), e), 0)
         end #for
 
         avgFlow += flowSum
@@ -51,26 +52,22 @@ function main()
     end #for
   end #for
 
-  for k in 1:16
+  for k in 3:maxSize
     open("experiments/zad2_k$k.csv", "w") do file
-      write(file, "k,i,avgMaxMatching\n")
+      write(file, "i,avgMaxMatching\n")
       for i in 1:k
-        write(file, "$k,$i,")
-        write(file, exps[(k, i)].flow)
-        write(file, "\n")
+        write(file, "$k,$i,$(exps[(k, i)].flow)\n")
       end #for
     end #open
   end #for
 
-  for i in 1:16
-    for k in 1:i
-      open("experiments/zad2_i$i.csv", "w") do file
-        write(file, "k,i,avgTime\n")
-        write(file, "$k,$i,")
-        write(file, exps[(k, i)].execTime)
-        write(file, "\n")
-      end #open
-    end #for
+  for i in 1:maxSize
+    open("experiments/zad2_i$i.csv", "w") do file
+      write(file, "k,avgTime\n")
+      for k in (max(i,3)):maxSize
+        write(file, "$k,$(exps[(k, i)].execTime)\n")
+      end #for
+    end #open
   end #for
 end #main
 

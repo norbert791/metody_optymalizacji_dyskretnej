@@ -5,7 +5,7 @@ function main()
 
   numberOfRepetitions = 40
 
-  open("zad1_results.csv", "w") do file
+  open("experiments/zad1_results.csv", "w") do file
     write(file, "k,avgFlow,avgTime,avgAugmentingPaths\n")
   end #open
 
@@ -40,7 +40,7 @@ function main()
     avgFlow /= numberOfRepetitions
     avgTime /= numberOfRepetitions
 
-    open("zad1_results.csv", "a") do file
+    open("experiments/zad1_results.csv", "a") do file
       write(file, "$k,$avgFlow,$avgTime,$avgAugmentingPaths\n")
     end #open
   end #for

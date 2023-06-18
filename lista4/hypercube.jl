@@ -4,7 +4,7 @@ import DataStructures
 
 using StatsBase
 
-export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices,
+export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices, DiracAlgorithm,
   bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube, randomBiparteGraph, printBiparteGraph
 
 mutable struct Hypercube
@@ -357,5 +357,140 @@ end #randomBiparteGraph
 function printBiparteGraph(graph::BiparteGraph)
   println(graph.neighbours)
 end
+
+function constructLevelGraph(cube::Hypercube, flow::Dict{Tuple{UInt16,UInt16},Int64}, from::UInt16)::Dict{UInt16,Int}
+  queue = DataStructures.Queue{UInt16}()
+  level::Dict{UInt16,Int} = Dict{UInt16,Int}()
+
+  DataStructures.enqueue!(queue, from)
+  level[from] = 0
+
+  while !isempty(queue)
+    current = DataStructures.dequeue!(queue)
+
+    for neighbour in getNeighbours(cube, current)
+      if !haskey(level, neighbour)
+        if get(flow, (current, neighbour), getEdgeWeight(cube, current, neighbour)) == 0
+          continue
+        end #if 
+        DataStructures.enqueue!(queue, neighbour)
+        level[neighbour] = level[current] + 1
+      end #if
+    end #for
+
+    # for neighbour in getReverseNeighbours(cube, current)
+    #   if !haskey(level, neighbour)
+    #     if get(flow, (neighbour, current), 0) == 0
+    #       continue
+    #     end #if
+    #     DataStructures.enqueue!(queue, neighbour)
+    #     level[neighbour] = level[current] + 1
+    #   end #if
+    # end #for
+  end #while
+
+  return level
+end #constructLevelGraph
+
+function findPath(cube::Hypercube, level::Dict{UInt16,Int}, from::UInt16, to::UInt16)::Vector{UInt16}
+  parent::Dict{UInt16,UInt16} = Dict{UInt16,UInt16}()
+  neighbours = getNeighbours(cube, from)
+  stack = DataStructures.Stack{UInt16}()
+  parent = Dict{UInt16,UInt16}()
+
+  push!(stack, from)
+  parent[from] = from
+
+  while !isempty(stack)
+    el = pop!(stack)
+
+    neighbours = getNeighbours(cube, el)
+    found = false
+
+    for neighbour in neighbours
+      if !haskey(level, neighbour)
+        continue
+      end #if
+
+      if level[neighbour] == level[el] + 1 && !haskey(parent, neighbour)
+        parent[neighbour] = el
+        push!(stack, neighbour)
+        found = true
+        break
+      end #if
+    end #for
+    if found
+      continue
+    end #if
+
+    for neighbour in getReverseNeighbours(cube, el)
+      if !haskey(level, neighbour)
+        continue
+      end #if
+
+      if level[neighbour] == level[el] + 1 && !haskey(parent, neighbour)
+        parent[neighbour] = el
+        push!(stack, neighbour)
+        break
+      end #if
+    end #for
+  end #while
+
+  if !haskey(parent, to)
+    return []
+  end #if
+
+  path = Vector{UInt16}()
+
+  current = to
+
+  while current != from
+    push!(path, current)
+    current = parent[current]
+  end #while
+
+  push!(path, from)
+
+  return path
+end #findOptimalPath
+
+function DiracAlgorithm(cube::Hypercube, from::UInt16, to::UInt16)::Tuple{Dict{Tuple{UInt16,UInt16},Int64},UInt64}
+
+  flow::Dict{Tuple{UInt16,UInt16},Int64} = Dict()
+  augmentingPaths = 0
+  level = constructLevelGraph(cube, flow, from)
+
+  while true
+    path = findPath(cube, level, from, to)
+    augmentingPaths += 1
+
+    if isempty(path)
+      break
+    end #if
+
+    #Find min capacity
+
+    minCapacity = typemax(UInt32)
+
+    for i in (length(path)):-1:2
+      println("Path: ", path[i], " ", path[i-1])
+      println("Flow: ", get(flow, (path[i], path[i-1]), 0))
+      println("Weight: ", getEdgeWeight(cube, path[i], path[i-1]))
+      minCapacity = min(minCapacity, get(flow, (path[i], path[i-1]), getEdgeWeight(cube, path[i], path[i-1])))
+    end #for
+
+    for i in (length(path)):-1:2
+      println("Adding flow from ", path[i], " to ", path[i-1], " with capacity ", minCapacity)
+      flow[(path[i], path[i-1])] = get(flow, (path[i], path[i-1]), getEdgeWeight(cube, path[i], path[i-1])) - minCapacity
+      flow[(path[i-1], path[i])] = get(flow, (path[i-1], path[i]), 0) - minCapacity
+    end #for
+
+    level = constructLevelGraph(cube, flow, from)
+
+    # sleep(0.5)
+  end #while
+
+  return flow, augmentingPaths
+end #DiracAlgorithm
 
 end #HypercubeGraph

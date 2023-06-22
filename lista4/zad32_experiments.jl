@@ -1,5 +1,6 @@
 include("hypercube.jl")
 using .HypercubeGraph
+using JuMP
 
 struct experimentResults
   flow::Float64
@@ -7,10 +8,10 @@ struct experimentResults
   execTime::Float64
 end #experimentResults
 
-function modelAndSolve(g::BiparteGraph)
+function modelAndSolve(g)
   model, f = getBiparteGraphModel(g)
   optimize!(model)
-  return value.(f), 0
+  return 0, 0
 end #modelAndSolve
 
 function main()
@@ -33,7 +34,7 @@ function main()
       for _ in 1:numberOfRepetitions
         cube = randomBiparteGraph(k, i)
 
-        stats = @timed modelAndSolve
+        stats = @timed modelAndSolve(cube)
 
         flow = stats.value[1]
         augmentingPaths = stats.value[2]

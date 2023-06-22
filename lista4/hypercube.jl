@@ -472,7 +472,6 @@ function getHyperCubeModel(cube::Hypercube)
     for j in 1:(numOfVertices)
       if i != j
         @constraint(model, flow[i, j] >= 0)
-        println(i, " ", j, " ", getEdgeWeight(cube, UInt16(i - 1), UInt16(j - 1)))
         x = Int(getEdgeWeight(cube, UInt16(i - 1), UInt16(j - 1)))
         @constraint(model, flow[i, j] <= x)
       end #if
@@ -506,7 +505,7 @@ function getBiparteGraphModel(graph::BiparteGraph)
     for j in (div(numOfVertices, 2)+1):numOfVertices
       if i != j
         @constraint(model, flow[i, j] >= 0)
-        println(i, " ", j, " ", getEdgeWeight(graph, UInt64(i - 1), UInt64(j - 1)))
+        # println(i, " ", j, " ", getEdgeWeight(graph, UInt64(i - 1), UInt64(j - 1)))
         x = Int(getEdgeWeight(graph, UInt64(i - 1), UInt64(j - 1)))
         @constraint(model, flow[i, j] <= x)
       end #if
@@ -531,7 +530,7 @@ function getBiparteGraphModel(graph::BiparteGraph)
 
     @objective(model, Max, sum(source[i] for i in 1:(div(numOfVertices, 2))))
 
-    println(model)
+    # println(model)
 
     return model, flow
   end #getBiparteGraphModel

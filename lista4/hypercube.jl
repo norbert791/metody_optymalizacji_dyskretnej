@@ -2,10 +2,10 @@ module HypercubeGraph
 
 import DataStructures
 
-using StatsBase
+using StatsBase, JuMP, GLPK, HiGHS
 
-export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices, DiracAlgorithm,
-  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube, randomBiparteGraph, printBiparteGraph
+export Hypercube, setEdgeWeight!, getEdgeWeight, getNeighbours, getReverseNeighbours, getAdjacentVertices, DinicAlgorithm, getHyperCubeModel,
+  bestFirstSearch, EdmondsKarp, hammingDistance, hammingWeight, randomHyperCube, printHypercube, randomBiparteGraph, printBiparteGraph, getBiparteGraphModel
 
 mutable struct Hypercube
   size::UInt8
@@ -76,8 +76,8 @@ function getEdgeWeight(cube::Hypercube, from::UInt16, to::UInt16)::UInt32
     throw(error("Edge does not exist"))
   end #if
 
-  @boundscheck if hammingDistance(from, to) != 1
-    throw(error("Edge does not exist"))
+  if hammingDistance(from, to) != 1
+    return UInt32(0)
   end #if
 
   if hammingWeight(from) > hammingWeight(to)
@@ -358,41 +358,29 @@ function printBiparteGraph(graph::BiparteGraph)
   println(graph.neighbours)
 end
 
-function constructLevelGraph(cube::Hypercube, flow::Dict{Tuple{UInt16,UInt16},Int64}, from::UInt16)::Dict{UInt16,Int}
+function constructLevelGraph(cube::Hypercube, flow::Dict{Tuple{UInt16,UInt16},Int64}, from::UInt16)::Set{Tuple{UInt16,UInt16}}
   queue = DataStructures.Queue{UInt16}()
-  level::Dict{UInt16,Int} = Dict{UInt16,Int}()
+  level::Set{Tuple{UInt16,UInt16}} = Set{Tuple{UInt16,UInt16}}()
 
   DataStructures.enqueue!(queue, from)
-  level[from] = 0
 
   while !isempty(queue)
     current = DataStructures.dequeue!(queue)
 
     for neighbour in getNeighbours(cube, current)
-      if !haskey(level, neighbour)
-        if get(flow, (current, neighbour), getEdgeWeight(cube, current, neighbour)) == 0
-          continue
-        end #if 
+      if !((current, neighbour) in level) &&
+         getEdgeWeight(cube, current, neighbour) - get(flow, (current, neighbour), 0) != 0
+
         DataStructures.enqueue!(queue, neighbour)
-        level[neighbour] = level[current] + 1
+        push!(level, (current, neighbour))
       end #if
     end #for
-
-    # for neighbour in getReverseNeighbours(cube, current)
-    #   if !haskey(level, neighbour)
-    #     if get(flow, (neighbour, current), 0) == 0
-    #       continue
-    #     end #if
-    #     DataStructures.enqueue!(queue, neighbour)
-    #     level[neighbour] = level[current] + 1
-    #   end #if
-    # end #for
   end #while
 
   return level
 end #constructLevelGraph
 
-function findPath(cube::Hypercube, level::Dict{UInt16,Int}, from::UInt16, to::UInt16)::Vector{UInt16}
+function findPath(cube::Hypercube, level::Set{Tuple{UInt16,UInt16}}, from::UInt16, to::UInt16)::Vector{UInt16}
   parent::Dict{UInt16,UInt16} = Dict{UInt16,UInt16}()
   neighbours = getNeighbours(cube, from)
   stack = DataStructures.Stack{UInt16}()
@@ -405,35 +393,16 @@ function findPath(cube::Hypercube, level::Dict{UInt16,Int}, from::UInt16, to::UI
     el = pop!(stack)
 
     neighbours = getNeighbours(cube, el)
-    found = false
 
     for neighbour in neighbours
-      if !haskey(level, neighbour)
+      if !((el, neighbour) in level)
         continue
       end #if
 
-      if level[neighbour] == level[el] + 1 && !haskey(parent, neighbour)
-        parent[neighbour] = el
-        push!(stack, neighbour)
-        found = true
-        break
-      end #if
+      parent[neighbour] = el
+      push!(stack, neighbour)
     end #for
-    if found
-      continue
-    end #if
 
-    for neighbour in getReverseNeighbours(cube, el)
-      if !haskey(level, neighbour)
-        continue
-      end #if
-
-      if level[neighbour] == level[el] + 1 && !haskey(parent, neighbour)
-        parent[neighbour] = el
-        push!(stack, neighbour)
-        break
-      end #if
-    end #for
   end #while
 
   if !haskey(parent, to)
@@ -454,14 +423,15 @@ function findPath(cube::Hypercube, level::Dict{UInt16,Int}, from::UInt16, to::UI
   return path
 end #findOptimalPath
 
-function DiracAlgorithm(cube::Hypercube, from::UInt16, to::UInt16)::Tuple{Dict{Tuple{UInt16,UInt16},Int64},UInt64}
+function DinicAlgorithm(cube::Hypercube, from::UInt16, to::UInt16)::Tuple{Dict{Tuple{UInt16,UInt16},Int64},UInt64}
 
   flow::Dict{Tuple{UInt16,UInt16},Int64} = Dict()
   augmentingPaths = 0
-  level = constructLevelGraph(cube, flow, from)
 
   while true
+    level = constructLevelGraph(cube, flow, from)
     path = findPath(cube, level, from, to)
+
     augmentingPaths += 1
 
     if isempty(path)
@@ -469,28 +439,102 @@ function DiracAlgorithm(cube::Hypercube, from::UInt16, to::UInt16)::Tuple{Dict{T
     end #if
 
     #Find min capacity
-
     minCapacity = typemax(UInt32)
 
     for i in (length(path)):-1:2
-      println("Path: ", path[i], " ", path[i-1])
-      println("Flow: ", get(flow, (path[i], path[i-1]), 0))
-      println("Weight: ", getEdgeWeight(cube, path[i], path[i-1]))
-      minCapacity = min(minCapacity, get(flow, (path[i], path[i-1]), getEdgeWeight(cube, path[i], path[i-1])))
+      # println("Path: ", path[i], " ", path[i-1])
+      # println("Flow: ", getEdgeWeight(cube, path[i], path[i-1]) - get(flow, (path[i], path[i-1]), 0))
+      # println("Weight: ", getEdgeWeight(cube, path[i], path[i-1]))
+      minCapacity = min(minCapacity, getEdgeWeight(cube, path[i], path[i-1]) - get(flow, (path[i], path[i-1]), 0))
     end #for
 
     for i in (length(path)):-1:2
-      println("Adding flow from ", path[i], " to ", path[i-1], " with capacity ", minCapacity)
-      flow[(path[i], path[i-1])] = get(flow, (path[i], path[i-1]), getEdgeWeight(cube, path[i], path[i-1])) - minCapacity
+      # println("Adding flow from ", path[i], " to ", path[i-1], " with capacity ", minCapacity)
+      flow[(path[i], path[i-1])] = get(flow, (path[i], path[i-1]), 0) + minCapacity
       flow[(path[i-1], path[i])] = get(flow, (path[i-1], path[i]), 0) - minCapacity
     end #for
 
-    level = constructLevelGraph(cube, flow, from)
-
-    # sleep(0.5)
   end #while
+
+  #Comment this line to return residual graph
+  filter!(x -> x.second > 0, flow)
 
   return flow, augmentingPaths
 end #DiracAlgorithm
+
+function getHyperCubeModel(cube::Hypercube)
+  model = Model(GLPK.Optimizer)
+  # model = Model(HiGHS.Optimizer)
+  numOfVertices = 2^cube.size
+  @variable(model, flow[i=1:numOfVertices, j=1:numOfVertices], Int)
+
+  for i in 1:(numOfVertices)
+    for j in 1:(numOfVertices)
+      if i != j
+        @constraint(model, flow[i, j] >= 0)
+        println(i, " ", j, " ", getEdgeWeight(cube, UInt16(i - 1), UInt16(j - 1)))
+        x = Int(getEdgeWeight(cube, UInt16(i - 1), UInt16(j - 1)))
+        @constraint(model, flow[i, j] <= x)
+      end #if
+    end #for
+  end #for
+
+  for i in 2:(numOfVertices-1)
+    @constraint(model, sum(flow[i, j] for j in 1:(numOfVertices)) == sum(flow[j, i] for j in 1:(numOfVertices)))
+  end #for
+
+  # @constraint(model, sum(flow[1, j] for j in 1:(numOfVertices)) == sum(flow[j, numOfVertices] for j in 1:(numOfVertices)))
+
+  @objective(model, Max, sum(flow[1, j] for j in 2:(numOfVertices)))
+
+  # println(model)
+
+  # optimize!(model)
+  # println(value.(flow))
+
+  return model, flow
+end #getHyperCubeModel
+
+function getBiparteGraphModel(graph::BiparteGraph)
+  model = Model(GLPK.Optimizer)
+  numOfVertices = 2^graph.size * 2
+  @variable(model, flow[i=1:numOfVertices, j=1:numOfVertices], Int)
+  @variable(model, source[i=1:div(numOfVertices, 2)], Int)
+  @variable(model, sink[i=(div(numOfVertices, 2)+1):numOfVertices], Int)
+
+  for i in 1:div(numOfVertices, 2)
+    for j in (div(numOfVertices, 2)+1):numOfVertices
+      if i != j
+        @constraint(model, flow[i, j] >= 0)
+        println(i, " ", j, " ", getEdgeWeight(graph, UInt64(i - 1), UInt64(j - 1)))
+        x = Int(getEdgeWeight(graph, UInt64(i - 1), UInt64(j - 1)))
+        @constraint(model, flow[i, j] <= x)
+      end #if
+    end #for
+  end #for
+
+  for i in 1:div(numOfVertices, 2)
+
+    for i in 1:div(numOfVertices, 2)
+      @constraint(model, source[i] >= 0)
+      @constraint(model, source[i] <= 1)
+      @constraint(model, sum(flow[i, j] for j in (div(numOfVertices, 2)+1):numOfVertices) == source[i])
+    end #for
+
+    for j in (div(numOfVertices, 2)+1):numOfVertices
+      @constraint(model, sink[j] >= 0)
+      @constraint(model, sink[j] <= 1)
+      @constraint(model, sum(flow[i, j] for i in 1:(div(numOfVertices, 2))) == sink[j])
+    end #for
+
+    # @constraint(model, sum(flow[1, j] for j in 1:(numOfVertices)) == sum(flow[j, numOfVertices] for j in 1:(numOfVertices)))
+
+    @objective(model, Max, sum(source[i] for i in 1:(div(numOfVertices, 2))))
+
+    println(model)
+
+    return model, flow
+  end #getBiparteGraphModel
+end
 
 end #HypercubeGraph

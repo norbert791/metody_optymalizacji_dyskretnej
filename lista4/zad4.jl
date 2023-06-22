@@ -24,9 +24,9 @@ function main()
   cubeSize = parse(UInt64, args["size"])
   cube = randomHyperCube(cubeSize)
 
-  printHypercube(cube)
+  # printHypercube(cube)
 
-  stats = @timed DiracAlgorithm(cube, UInt16(0), UInt16(2^cubeSize - 1))
+  stats = @timed DinicAlgorithm(cube, UInt16(0), UInt16(2^cubeSize - 1))
 
   flow = stats.value[1]
   augmentingPaths = stats.value[2]
@@ -39,6 +39,7 @@ function main()
   end #for
 
   println("Max flow: $flowSum")
+
   if args["printFlow"]
     println("Flow:")
     println(flow)

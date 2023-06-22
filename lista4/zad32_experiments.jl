@@ -17,7 +17,7 @@ end #modelAndSolve
 function main()
 
   numberOfRepetitions = 40
-  maxSize = 10
+  maxSize = 6
 
   exps = Dict()
 

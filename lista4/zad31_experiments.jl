@@ -1,5 +1,6 @@
 include("hypercube.jl")
 using .HypercubeGraph
+using JuMP
 
 function modelAndSolve(g)
   model, f = getHyperCubeModel(g)
@@ -11,7 +12,7 @@ function main()
 
   numberOfRepetitions = 40
 
-  open("experiments/zad1_results.csv", "w") do file
+  open("experiments/zad31_results.csv", "w") do file
     write(file, "k,avgFlow,avgTime,avgAugmentingPaths\n")
   end #open
 
@@ -25,7 +26,7 @@ function main()
     for _ in 1:numberOfRepetitions
       cube = randomHyperCube(k)
 
-      stats = @timed EdmondsKarp(cube, UInt16(0), UInt16(2^k - 1))
+      stats = @timed modelAndSolve(cube)
 
       flow = stats.value[1]
       augmentingPaths = stats.value[2]
@@ -46,7 +47,7 @@ function main()
     avgFlow /= numberOfRepetitions
     avgTime /= numberOfRepetitions
 
-    open("experiments/zad1_results.csv", "a") do file
+    open("experiments/zad31_results.csv", "a") do file
       write(file, "$k,$avgFlow,$avgTime,$avgAugmentingPaths\n")
     end #open
   end #for
